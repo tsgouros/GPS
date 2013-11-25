@@ -1,19 +1,14 @@
 function preset = gps_presets(name)
-% Returns preset variables. Change this file for a new group
+% Returns preset variables.
 %
-% Author: A. Conrad Nied (conrad.logos@gmail.com)
+% Author: A. Conrad Nied (anied@cs.washington.edu)
 %
 % Changelog:
-% 2012-10-22 Created
-% 2013-04-05 Updated for GPS 1.8
-% 2013-07-02 Added figure numbers
-% 2013-07-08 Added stages
-% 2013-08-09 Added images
+% 2013-11-24 Automatically generated to format GPS by user anied
 
 switch lower(name)
     case {'gpsnum', 'gpsfig', 'menu figure'}
-        preset = 6750000;
-    case {'gpsanum', 'gpsafig', 'analysis figure'}
+        preset = 6750000;    case {'gpsanum', 'gpsafig', 'analysis figure'}
         preset = 6754000;
     case {'gpsenum', 'gpsefig', 'edit figure'}
         preset = 6753000;
@@ -22,15 +17,15 @@ switch lower(name)
     case {'gpspnum', 'gpspfig', 'plotting figure'}
         preset = 6757000;
     case {'dir', 'directory'}
-        preset = '/autofs/cluster/dgow/GPS1.8';
+        preset = '/homes/gws/anied/MGH/GPS';
     case {'functions', 'functiondir', 'fdir'}
-        preset = '/autofs/cluster/dgow/GPS1.8/functions';
+        preset = '/homes/gws/anied/MGH/GPS/functions';
     case {'parameters', 'parameterdir', 'pdir'}
-        preset = '/autofs/cluster/dgow/GPS1.8/parameters';
+        preset = '/homes/gws/anied/MGH/GPS/parameters';
     case {'images', 'imagedir', 'idir'}
-        preset = '/autofs/cluster/dgow/GPS1.8/images';
+        preset = '/homes/gws/anied/MGH/GPS/images';
     case {'study'}
-        preset = 'PTC3';
+        preset = 'SampleStudy';
     case {'stages'}
         preset = {'util', 'mri', 'meg', 'mne', 'plv', 'granger'};
 end % switch
