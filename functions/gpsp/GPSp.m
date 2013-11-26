@@ -20,7 +20,7 @@ function varargout = GPSp(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 14-Aug-2013 06:57:48
+% Last Modified by GUIDE v2.5 17-Sep-2013 20:37:02
 
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -484,6 +484,9 @@ gpsp_draw_surf;
 function surf_atlas_layer_Callback(hObject, eventdata, handles)
 gpsp_draw_surf;
 
+function surf_atlas_border_Callback(hObject, eventdata, handles)
+gpsp_draw_surf;
+
 function surf_left_Callback(hObject, eventdata, handles)
 gpsp_draw_surf;
 
@@ -710,3 +713,12 @@ gpsp_draw_surf;
 
 function act_movie_Callback(hObject, eventdata, handles)
 gpsp_draw_activity_movie;
+
+function surf_atlas_primary_Callback(hObject, eventdata, handles)
+gpsp_draw_surf;
+
+function bubbles_asterisk_Callback(hObject, eventdata, handles)
+gpsp_draw_granger;
+
+function arrows_asterisk_Callback(hObject, eventdata, handles)
+gpsp_draw_granger;

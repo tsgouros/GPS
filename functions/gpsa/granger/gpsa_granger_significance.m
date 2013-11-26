@@ -5,9 +5,10 @@ function varargout = gpsa_granger_significance(varargin)
 % Author: A. Conrad Nied (conrad.logos@gmail.com)
 %
 % Changelog:
-% 2012.12.13 - GPS1.7 gpsa_granger_sigtests.m Created
-% 2013.07.08 - GPS1.8 Created to just gather the percentile data.
-% 2013.07.10 - State subject is now condition brain
+% 2012-12-13 GPS1.7 gpsa_granger_sigtests.m Created
+% 2013-07-08 GPS1.8 Created to just gather the percentile data.
+% 2013-07-10 State subject is now condition brain
+% 2013-09-16 Added exceptions for older datasets
 
 %% Input
 
@@ -51,8 +52,12 @@ if(~isempty(strfind(operation, 'c')))
     % Get general data
     data.name = 'results';
     data.condition = condition;
-    if(isfield(rawdata, 'sample_times')); data.sample_times = rawdata.sample_times; end
-    data.rois = rawdata.all_rois;
+    if(isfield(rawdata, 'sample_times'));
+        data.sample_times = rawdata.sample_times;
+    end
+    if(isfield(rawdata, 'all_rois')); data.rois = rawdata.all_rois;
+    elseif(isfield(rawdata, 'rois')); data.rois = rawdata.rois;
+    end
     data.act = rawdata.data;
     data.results = rawdata.granger_results;
     data.srcs = rawdata.src_ROIs;
@@ -61,7 +66,9 @@ if(~isempty(strfind(operation, 'c')))
     
     % Granger parameters
     data.model_order = rawdata.model_order;
-    data.pred_adapt = rawdata.pred_adapt;
+    if(isfield(rawdata, 'pred_adapt')); data.pred_adapt = rawdata.pred_adapt;
+    else data.pred_adapt = rawdata.W_gain;
+    end
     data.file_rawgranger = rawdata.inputfilename;
     data.file_nullhypotheses = rawfilename;
     data.file_results = outputfilename;

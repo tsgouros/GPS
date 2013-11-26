@@ -64,6 +64,11 @@ if(i_parc > 1)
     options.parcellation_overlay = get(state.surf_atlas_layer, 'String');
     options.parcellation_overlay = options.parcellation_overlay{get(state.surf_atlas_layer, 'Value')};
     options.parcellation_border = str2double(get(state.surf_atlas_border, 'String'));
+    
+    if(get(state.surf_atlas_primary, 'Value'))
+        options.parcellation_spec = get(state.regions_sel_list, 'String');
+        options.parcellation_spec = options.parcellation_spec(get(state.regions_sel_list, 'Value'));
+    end
 end
 
 % Activity

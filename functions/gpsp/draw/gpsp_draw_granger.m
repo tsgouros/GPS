@@ -6,6 +6,7 @@ function gpsp_draw_granger
 % Changelog:
 % 2013-08-12 Made GPS1.8/gpsp_draw_granger from GPS1.8/gpsp_draw_circle
 % 2013-08-13 Ironing out the cortical options
+% 2013-09-17 Added asterisk options
 
 %% Prepare figure
 
@@ -37,29 +38,47 @@ font = get(state.tcs_font, 'String');
 font = font{get(state.tcs_font, 'Value')};
 set(axes, 'FontName', font);
 
+% Set asterisks early
+if(~get(state.arrows_asterisk, 'Value'))
+    plotdata.asterisk = zeros(size(plotdata.asterisk));
+end
+if(~get(state.bubbles_asterisk, 'Value'))
+    plotdata.asterisk_src = zeros(size(plotdata.asterisk_src));
+    plotdata.asterisk_snk = zeros(size(plotdata.asterisk_snk));
+end
+
 %% Set coloring
 
 switch get(state.arrows_color, 'Value')
-    case 1 % Green/Red Solid
-        color_recip = 0;
-        color_direc = 2.5;
-        color_snk = 5;
-        color_src = 0;
+    case 1 % Blue-Red Solid
+        %  Old Green/Red Solid system
+%         color_recip = 0;
+%         color_direc = 2.5;
+%         color_snk = 5;
+%         color_src = 0;
+%         
+%         cmap_line = 0:0.005:1;
+%         cmap_line = sqrt(cmap_line);
+%         cmap = [flipud(cmap_line') cmap_line' zeros(length(cmap_line), 1)];
+%         cmap2 = [zeros(length(cmap_line), 1) flipud(cmap_line') cmap_line'];
+%         cmap = [cmap; cmap2];
+%         colormap(axes, cmap);
+%         
+%         %  Negative colors
+%         color_snk_neg = color_snk;
+%         color_src_neg = color_src;
+%         color_direc_neg = color_direc;
+%         color_recip_neg = color_recip;
+%         caxis(axes, [0 5]);
         
-        cmap_line = 0:0.005:1;
-        cmap_line = sqrt(cmap_line);
-        cmap = [flipud(cmap_line') cmap_line' zeros(length(cmap_line), 1)];
-        cmap2 = [zeros(length(cmap_line), 1) flipud(cmap_line') cmap_line'];
-        cmap = [cmap; cmap2];
+        color_recip = 0; color_direc = 0;
+        color_snk = 0; color_src = 0;
+        color_snk_neg = 15; color_src_neg = 15;
+        color_direc_neg = 15; color_recip_neg = 15;
+        cmap = [0 0 0.9; 0.9 0 0];
         colormap(axes, cmap);
+        caxis(axes, [0 15]);
         
-        %  Negative colors
-        color_snk_neg = color_snk;
-        color_src_neg = color_src;
-        color_direc_neg = color_direc;
-        color_recip_neg = color_recip;
-        
-        caxis(axes, [0 5]);
     case 2 % Green Blue Gradient
         color_snk = 0;
         color_src = 5;
@@ -305,27 +324,30 @@ if(get(state.arrows_show, 'Value'))
     edges_recip = [i_snks i_srcs];
 
     for i_pair = 1:length(i_snks)
+        i_src = i_srcs(i_pair);
+        i_snk = i_snks(i_pair);
         
         % Coordinates
-        x_src = x_nodes(i_srcs(i_pair));
-        y_src = y_nodes(i_srcs(i_pair));
-        x_snk = x_nodes(i_snks(i_pair));
-        y_snk = y_nodes(i_snks(i_pair));
-        z_src = z_nodes(i_srcs(i_pair));
-        z_snk = z_nodes(i_snks(i_pair));
+        x_src = x_nodes(i_src);
+        y_src = y_nodes(i_src);
+        x_snk = x_nodes(i_snk);
+        y_snk = y_nodes(i_snk);
+        z_src = z_nodes(i_src);
+        z_snk = z_nodes(i_snk);
         
         x_mid = (x_src + x_snk) / 2;
         y_mid = (y_src + y_snk) / 2;
         z_mid = (z_src + z_snk) / 2;
         
-        value = plotdata.connections(i_snks(i_pair), i_srcs(i_pair));
-        value2 = plotdata.connections(i_srcs(i_pair), i_snks(i_pair));
+        value = plotdata.connections(i_snk, i_src);
+        value2 = plotdata.connections(i_src, i_snk);
+        if(plotdata.asterisk(i_snk, i_src)); star1 = '*'; else star1 = ''; end
+        if(plotdata.asterisk(i_src, i_snk)); star2 = '*'; else star2 = ''; end
         if(mod(value, 1) && mod(value2, 1))
-            value_str = sprintf('%.2f&%.2f', value, value2);
+            value_str = sprintf('%.2f%s&%.2f%s', value, star1, value2, star2);
         else
-            value_str = sprintf('%d&%d', value, value2);
+            value_str = sprintf('%d%s&%d%s', value, star1, value2, star2);
         end
-        
         
         if(fig_circle)
             width = abs([value value2] .* scale / 1000);
@@ -346,7 +368,7 @@ if(get(state.arrows_show, 'Value'))
                 col = [color_recip color_recip];
         end
         
-        if(i_srcs(i_pair) < i_snks(i_pair))
+        if(i_src < i_snk)
             gpsp_draw_arrow([x_src y_src z_src], [x_snk y_snk z_snk],...
                 'Width', width,...
                 'Triangle Width', width_tri,...
@@ -360,6 +382,15 @@ if(get(state.arrows_show, 'Value'))
             if(get(state.arrows_weights, 'Value'))
                 text(x_mid, y_mid, z_mid,...
                     value_str,...
+                    'HorizontalAlignment', 'center',...
+                    'Color', repmat(get(state.surf_bg, 'Value')==4, 3, 1),...
+                    'FontWeight', 'bold',...
+                    'FontSize', 14,...
+                    'FontName', font,...
+                    'Parent', axes);
+            elseif(~isempty(star1) || ~isempty(star2))
+                text(x_mid, y_mid, z_mid,...
+                    [star1 '&' star2],...
                     'HorizontalAlignment', 'center',...
                     'Color', repmat(get(state.surf_bg, 'Value')==4, 3, 1),...
                     'FontWeight', 'bold',...
@@ -380,22 +411,26 @@ if(get(state.arrows_show, 'Value'))
     i_srcs = edges_drctd(:, 2);
 
     for i_pair = 1:length(i_snks)
+        i_src = i_srcs(i_pair);
+        i_snk = i_snks(i_pair);
+        
         % Coordinates
-        x_src = x_nodes(i_srcs(i_pair));
-        y_src = y_nodes(i_srcs(i_pair));
-        x_snk = x_nodes(i_snks(i_pair));
-        y_snk = y_nodes(i_snks(i_pair));
-        z_src = z_nodes(i_srcs(i_pair));
-        z_snk = z_nodes(i_snks(i_pair));
+        x_src = x_nodes(i_src);
+        y_src = y_nodes(i_src);
+        x_snk = x_nodes(i_snk);
+        y_snk = y_nodes(i_snk);
+        z_src = z_nodes(i_src);
+        z_snk = z_nodes(i_snk);
         x_mid = (x_src + x_snk) / 2;
         y_mid = (y_src + y_snk) / 2;
         z_mid = (z_src + z_snk) / 2;
 
-        value = plotdata.connections(i_snks(i_pair), i_srcs(i_pair));
+        value = plotdata.connections(i_snk, i_src);
+        if(plotdata.asterisk(i_snk, i_src)); star = '*'; else star = ''; end
         if(mod(value, 1))
-            value_str = sprintf('%.2f', value);
+            value_str = sprintf('%.2f%s', value, star);
         else
-            value_str = sprintf('%d', value);
+            value_str = sprintf('%d%s', value, star);
         end
         
         if(fig_circle)
@@ -426,6 +461,15 @@ if(get(state.arrows_show, 'Value'))
         if(get(state.arrows_weights, 'Value'))
             text(x_mid, y_mid, z_mid,...
                 value_str,...
+                'HorizontalAlignment', 'center',...
+                'Color', repmat(get(state.surf_bg, 'Value')==4, 3, 1),...
+                'FontWeight', 'bold',...
+                'FontSize', 14,...
+                'FontName', font,...
+                'Parent', axes);
+        elseif(~isempty(star))
+            text(x_mid, y_mid, z_mid,...
+                star,...
                 'HorizontalAlignment', 'center',...
                 'Color', repmat(get(state.surf_bg, 'Value')==4, 3, 1),...
                 'FontWeight', 'bold',...
@@ -493,7 +537,7 @@ end
 
 %% Label Nodes
 
-if(get(state.regions_labels_show, 'Value') || get(state.bubbles_weights, 'Value'))
+% if(get(state.regions_labels_show, 'Value') || get(state.bubbles_weights, 'Value'))
     fontsize = str2double(get(state.regions_labels_size, 'String'));
 %     fontcolors = [1 1 1; 0.712 0.712 0.712; .5 .5 .5; 0 0 0; 1 0 0; 1 1 0; 0 1 0; 0 1 1; 0 0 1; 1 0 1];
 %     fontcolor = get(state.regions_labels_color, 'Value');
@@ -505,47 +549,70 @@ if(get(state.regions_labels_show, 'Value') || get(state.bubbles_weights, 'Value'
         if get(state.regions_labels_show, 'Value')
             nodetext{1} = plotdata.rois{i_ROI};
         end
-        if(get(state.bubbles_weights, 'Value') && get(state.bubbles_source, 'Value'))
+        if(get(state.bubbles_source, 'Value'))
+            
             value = plotdata.source_strength(i_ROI);
-            if(mod(value, 1))
-                nodetext{length(nodetext) + 1} = sprintf('%.2f ->', value); %#ok<*AGROW>
+            if(get(state.bubbles_weights, 'Value'))
+                if(mod(value, 1))
+                    valuestr = sprintf('%.2f ->', value);
+                else
+                    valuestr = sprintf('%d ->', value);
+                end
             else
-                nodetext{length(nodetext) + 1} = sprintf('%d ->', value);
+                valuestr = '';
+            end
+            
+            if(plotdata.asterisk_src(i_ROI)); star = '\ast'; else star = ''; end
+            this_nodetext = [valuestr star];
+            if(~isempty(this_nodetext))
+                nodetext{length(nodetext) + 1} = this_nodetext; %#ok<*AGROW>
             end
         end
-        if(get(state.bubbles_weights, 'Value') && get(state.bubbles_sink, 'Value'))
+        if(get(state.bubbles_sink, 'Value'))
+
             value = plotdata.sink_strength(i_ROI);
-            if(mod(value, 1))
-                nodetext{length(nodetext) + 1} = sprintf('-> %.2f', value);
+            if(get(state.bubbles_weights, 'Value'))
+                if(mod(value, 1))
+                    valuestr = sprintf('%.2f ->', value);
+                else
+                    valuestr = sprintf('%d ->', value);
+                end
             else
-                nodetext{length(nodetext) + 1} = sprintf('-> %d', value);
+                valuestr = '';
+            end
+            
+            if(plotdata.asterisk_snk(i_ROI)); star = '\ast'; else star = ''; end
+            this_nodetext = [valuestr star];
+            if(~isempty(this_nodetext))
+                nodetext{length(nodetext) + 1} = this_nodetext;
             end
         end
-        
-        if(fig_circle)
-            text(x_nodes(i_ROI) * 1.2,...
-                y_nodes(i_ROI) * 1.2,...
-                nodetext,...
-                'FontSize', fontsize,...
-                'Color', fontcolor,...
-                'VerticalAlignment', 'middle',...
-                'HorizontalAlignment', 'center',...
-                'FontName', font,...
-                'Parent', axes);
-        elseif(fig_cortex)
-            text(x_nodes(i_ROI) * 1.2,...
-                y_nodes(i_ROI),...
-                z_nodes(i_ROI),...
-                nodetext,...
-                'FontSize', fontsize,...
-                'FontWeight', 'bold',...
-                'Color', fontcolor,...
-                'VerticalAlignment', 'middle',...
-                'HorizontalAlignment', 'center',...
-                'FontName', font,...
-                'Parent', axes);
+        if(~isempty(nodetext))
+            if(fig_circle)
+                text(x_nodes(i_ROI) * 1.2,...
+                    y_nodes(i_ROI) * 1.2,...
+                    nodetext,...
+                    'FontSize', fontsize,...
+                    'Color', fontcolor,...
+                    'VerticalAlignment', 'middle',...
+                    'HorizontalAlignment', 'center',...
+                    'FontName', font,...
+                    'Parent', axes);
+            elseif(fig_cortex)
+                text(x_nodes(i_ROI) * 1.2,...
+                    y_nodes(i_ROI),...
+                    z_nodes(i_ROI),...
+                    nodetext,...
+                    'FontSize', fontsize,...
+                    'FontWeight', 'bold',...
+                    'Color', fontcolor,...
+                    'VerticalAlignment', 'middle',...
+                    'HorizontalAlignment', 'center',...
+                    'FontName', font,...
+                    'Parent', axes);
+            end
         end
     end % For each ROI
-end % If we are displaying labels
+% end % If we are displaying labels
 
 end % function

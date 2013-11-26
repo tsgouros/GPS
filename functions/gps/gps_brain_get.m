@@ -1,17 +1,35 @@
 function brain =  gps_brain_get(varargin)
 % Retrieves the brain structure
 %
-% Author: Conrad Nied
+% Author: A. Conrad Nied (conrad.logos@gmail.com)
 %
 % Changelog
-% 2012.10.11 - Created
-% 2013.06.21 - Improved functionality, it just needs the subject structure.
-% 2013.06.28 - Processes brain2mat if it hasn't been done yet
+% 2012-10-11 Created
+% 2013-06-21 Improved functionality, it just needs the subject structure.
+% 2013-06-28 Processes brain2mat if it hasn't been done yet
+% 2013-09-16 Accepts state and subject arguments now
 
 if(nargin == 1)
     argin = varargin{1};
     if(isstruct(argin))
-        if(strcmp(argin.name, 'state'))
+        if(strcmp(argin.name, 'state') || (isfield(argin, 'type') && strcmp(argin.type, 'state')))
+            state = argin;
+        else%if(strcmp(argin.type, 'subject'))
+            subject = argin;
+        end
+    end
+elseif(nargin == 2)
+    argin = varargin{1};
+    if(isstruct(argin))
+        if(strcmp(argin.name, 'state') || (isfield(argin, 'type') && strcmp(argin.type, 'state')))
+            state = argin;
+        else%if(strcmp(argin.type, 'subject'))
+            subject = argin;
+        end
+    end
+    argin = varargin{2};
+    if(isstruct(argin))
+        if(strcmp(argin.name, 'state') || (isfield(argin, 'type') && strcmp(argin.type, 'state')))
             state = argin;
         else%if(strcmp(argin.type, 'subject'))
             subject = argin;

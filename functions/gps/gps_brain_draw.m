@@ -37,6 +37,7 @@ if(isnumeric(options.parcellation)); options.parcellation = num2str(options.parc
 if(~isfield(options, 'parcellation_text')); options.parcellation_text = 0; end
 if(~isfield(options, 'parcellation_overlay')); options.parcellation_overlay = 'bg'; end
 if(~isfield(options, 'parcellation_border')); options.parcellation_border = 0; end
+if(~isfield(options, 'parcellation_spec')); options.parcellation_spec = {}; end
 if(~isfield(options, 'layout')); options.layout = 2; end
 if(~isfield(options, 'shading')); options.shading = false; end
 if(~isfield(options, 'background')); options.background = 'k'; end
@@ -170,8 +171,18 @@ switch lower(options.parcellation)
     otherwise
         if(~isempty(options.parcellation) && isfield(data, options.parcellation))
             parcI = data.(options.parcellation).I;
-            CData_parc = data.(options.parcellation).Cmap(parcI,:);
+%             CData_parc = data.(options.parcellation).Cmap(parcI,:);
             parc_names = data.(options.parcellation).text;
+            
+            if(~isempty(options.parcellation_spec));
+                for i = length(parc_names):-1:2
+                   if(~sum(strcmp(options.parcellation_spec, parc_names{i})))
+                       parcI(parcI == i) = 1;
+                   end
+                end
+            end
+            
+            CData_parc = data.(options.parcellation).Cmap(parcI,:);
         end
 end % Switch on the parcellation
 

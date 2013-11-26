@@ -13,13 +13,14 @@ function GPS
 state.name = 'state';
 
 % Initialize the state structure
-state.dir = '/autofs/cluster/dgow/GPS1.8';
+state.dir = gps_presets('dir');
 
 % Get the position of the monitor
 state.gui.position.screen = get(0, 'ScreenSize');
 
 % Load function directory
-addpath(genpath([state.dir '/functions']));
+addpath(genpath(gps_presets('functions')));
+addpath(pwd);
 
 % Start the figure
 state.gui.fig = gps_presets('gpsafig');

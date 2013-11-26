@@ -7,6 +7,7 @@ function gpsp_compute_granger
 % 2013-07-15 Created GPS1.8/gpsp_compute_granger out of GPS1.7/plot_draw
 % 2013-08-05 Can be specified as pairs of connections
 % 2013-08-10 Added constrasting options
+% 2013-09-17 Added asterisk marking routines
 
 %% Parameters
 
@@ -55,6 +56,7 @@ if(exist('plotdata2', 'var'))
     
     % Compute p(difference)
     plotdata.p_diff = zeros(size(plotdata.connections));
+    plotdata.asterisk = zeros(size(plotdata.connections));
     p_thresh = str2double(get(state.method_rethresh_p_val, 'String'));
 %     if(get(state.method_rethresh_p, 'Value'))
 %         plotdata.connections(abs(plotdata.p_diff) > str2double(get(state.method_rethresh_p_val, 'String'))) = 0;
@@ -76,6 +78,7 @@ if(exist('plotdata2', 'var'))
                     special = '';
                 else
                     special = '*';
+                    plotdata.asterisk(j, i) = 1;
                 end
                 
                 if plotdata.flag_count
@@ -115,6 +118,8 @@ if(exist('plotdata2', 'var'))
     fprintf('\n');
     
     %% Compute Node Strength
+    plotdata.asterisk_src = sum(plotdata.asterisk, 1);
+    plotdata.asterisk_snk = sum(plotdata.asterisk, 2);
     
     % Source
     for i = 1:length(plotdata.connections)
@@ -146,6 +151,10 @@ if(exist('plotdata2', 'var'))
             end
         end
     end
+else
+    plotdata.asterisk = zeros(size(plotdata.connections));
+    plotdata.asterisk_src = zeros(size(plotdata.connections, 1));
+    plotdata.asterisk_snk = zeros(size(plotdata.connections, 2));
 end
 
 %% Save Data
