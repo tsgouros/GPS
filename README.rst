@@ -15,9 +15,6 @@ To get the latest code using git, simply type::
 
     git clone git@github.com:conradarcturus/GPS.git
 
-If you don't have git installed, you can download a zip or tarball
-of the latest code: http://github.com/mne-tools/mne-python/archives/master
-
 Initializing GPS
 ^^^^^^^^^^^^^^^^^^
 
@@ -26,8 +23,11 @@ Run the gps_init.m script in the main folder
 Dependencies
 ^^^^^^^^^^^^
 
-Matlab
-Probably a toolbox or two from Matlab
+* Matlab
+* Probably a toolbox or two from Matlab
+
+* MNE
+* Freesurfer
 
 Contact
 ^^^^^^^^^^^^
