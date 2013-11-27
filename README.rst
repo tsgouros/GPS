@@ -6,7 +6,7 @@ Graphical Processing Stream
 
 This ensemble of Matlab programs provides an interactive framework for the processing of MEG/EEG data. It uses `Freesurfer <http://surfer.nmr.mgh.harvard.edu/>`_ and `MNE <http://martinos.org/mne>`_. Make sure you have both packages installed and properly instantiated before running GPS: Analysis.
 
-For the purposes of this quick guide, I based it mostly off of `mne-python's git <page https://github.com/mne-tools/mne-python>`_
+For the purposes of this quick guide, I based it mostly off of `mne-python's git page <https://github.com/mne-tools/mne-python>`_
 
 Get the latest code
 ^^^^^^^^^^^^^^^^^^^
