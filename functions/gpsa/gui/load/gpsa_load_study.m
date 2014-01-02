@@ -1,13 +1,14 @@
 function gpsa_load_study
 % Loads a study's information for GPS: Analysis
 %
-% Author: A. Conrad Nied
+% Author: Alexander Conrad Nied (anied@cs.washington.edu)
 %
 % Changelog:
-% 2012.09.19 - created, branched from gpsa_init_studies
-% 2012.09.27 - removed stage initialization and average subject
-% 2013.04.05 - Updated to GPS 1.8
-% 2013.04.25 - Changed subset design to condition hierarchy
+% 2012-09-19 created, branched from gpsa_init_studies
+% 2012-09-27 removed stage initialization and average subject
+% 2013-04-05 Updated to GPS 1.8
+% 2013-04-25 Changed subset design to condition hierarchy
+% 2014-01-02 GPS1.9 Creates missing studies
 
 % Load the state of the GUI
 state = gpsa_get('state');
@@ -30,8 +31,12 @@ gpsa_set(state);
 % Update the study for version
 study = gpsa_parameter(state.study);
 
-if(~isfield(study, 'version') || ~strcmp(study.version, 'GPS1.8') || 1)
-    study = gpse_convert_study(study);
+if(~isfield(study, 'version') || ~strcmp(study.version, 'GPS1.9') || 1)
+    if(isempty(study))
+        study = gpse_convert_study(state.study);
+    else
+        study = gpse_convert_study(study);
+    end
     gpsa_parameter(study);
 end
 

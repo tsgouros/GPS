@@ -1,11 +1,12 @@
 function gps_init()
 % Initializes GPS directories on a new computer
 %
-% Author: A. Conrad Nied (anied@cs.washington.edu)
+% Author: Alexander Conrad Nied (anied@cs.washington.edu)
 %
 % Changelog:
 % 2013-11-22 Created
 % 2013-11-24 Finished
+% 2014-01-02 GPS1.9 Adds the image directory
 
 % Confirm
 files = dir();
@@ -103,7 +104,11 @@ for i_file = 1:length(files)
         end
     end
 end
+if(~exist(folders{3}, 'dir'))
+    mkdir(folders{3});
+end
 
+% Clear the logs folder
 if(~exist(folders{4}, 'dir'))
     mkdir(folders{4});
 end

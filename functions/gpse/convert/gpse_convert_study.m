@@ -1,21 +1,22 @@
 function study = gpse_convert_study(varargin)
 % Converts a study into the GPS 1.7 framework or fills defaults
 %
-% Author: Conrad Nied
+% Author: Alexander Conrad Nied (anied@cs.washington.edu)
 %
 % Input: The name for default study structure and optionally an old one to
 % convert
 % Output: Converted Study structure
 %
 % Changelog:
-% 2012.09.18 - Created based on GPS 1.6 data_defaultstudy.m, changed
+% 2012-09-18 Created based on GPS 1.6 data_defaultstudy.m, changed
 % variables, removed some, removed GPS1.4 if clauses
-% 2012.09.19 - Modified to work under GPSe
-% 2013.01.08 - Added flag for PLV computation
-% 2013.04.09 - Updated to GPS1.8, changed the default sample rate
-% 2013.04.25 - Changed subset design to condition hierarchy
-% 2013.07.10 - Removed average_name and granger.singlesubject (moved to
+% 2012-09-19 Modified to work under GPSe
+% 2013-01-08 Added flag for PLV computation
+% 2013-04-09 Updated to GPS1.8, changed the default sample rate
+% 2013-04-25 Changed subset design to condition hierarchy
+% 2013-07-10 Removed average_name and granger.singlesubject (moved to
 % conditions)
+% 2014-01-02 GPS1.9 Correctly reacts if the study did not exist before
 
 past = 0;
 if(nargin > 1 && ~isempty(varargin{1}))
@@ -43,7 +44,7 @@ study.type = 'study';
 study.last_edited = 'new';
 
 % version
-study.version = 'GPS1.8';
+study.version = 'GPS1.9';
 
 % average_name removed
 
@@ -51,9 +52,11 @@ study.version = 'GPS1.8';
 if(past & isfield(oldstudy,'basedir') & ~isempty(oldstudy.basedir) & oldstudy.basedir ~= 0)
     study.basedir = oldstudy.basedir;
 else
-    study.basedir = inputdlg({'Base Directory'}, 'What''s the study base directory', 1, {''});
-    if(isempty(study.basedir));
+    answer = inputdlg({'Base Directory'}, 'What''s the study base directory', 1, {''});
+    if(isempty(answer));
         error('Must specify a base directory');
+    else
+        study.basedir = answer{1};
     end
 end
 
