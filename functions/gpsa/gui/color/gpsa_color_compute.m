@@ -1,16 +1,17 @@
 function gpsa_color_compute()
 % Computes the colors for entries in for GPS: Analysis
 %
-% Author: A. Conrad Nied (conrad.logos@gmail.com)
+% Author: Alexander Conrad Nied (anied@cs.washington.edu)
 %
 % Changelog:
-% 2012.09.21 - Created
-% 2012.09.27 - Disabled because it doesn't work with the button version yet
-% 2012.10.03 - Re-enabled and remade to confirm to current functional
+% 2012-09-21 Created
+% 2012-09-27 Disabled because it doesn't work with the button version yet
+% 2012-10-03 Re-enabled and remade to confirm to current functional
 % layout
-% 2012.11.07 - Doesn't find status if autocolor is off, just says 0
-% 2013.04.25 - GPS1.8 Changed subset design to condition hierarchy
-% 2013.07.10 - Added applicability
+% 2012-11-07 Doesn't find status if autocolor is off, just says 0
+% 2013-04-25 GPS1.8 Changed subset design to condition hierarchy
+% 2013-07-10 Added applicability
+% 2014-01-06 GPS1.9 Works with a variable number of stages
 
 orig_state = gpsa_get;
 state = orig_state;
@@ -29,7 +30,7 @@ i_conditions = get(state.gui.condition_list, 'Value');
 conditions = conditions(i_conditions);
 
 % Iterate for each instance of the functions
-for i_stage = 1:6
+for i_stage = 1:length(stages)
     stage = stages{i_stage};
     
     functions = eval(['gpsa_' stage '_functions']);

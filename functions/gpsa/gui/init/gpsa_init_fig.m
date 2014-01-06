@@ -1,19 +1,20 @@
 function gpsa_init_fig
 % Initializes figure components for GPS: Analysis
 %
-% Author: A. Conrad Nied
+% Author: Alexander Conrad Nied (anied@cs.washington.edu)
 %
 % Changelog:
-% 2012.09.17 - Created
-% 2012.09.19 - Added callbacks and override toggle
-% 2012.09.21 - Added stage, function, and queue functionality
-% 2012.09.26 - Removed stage, function, queue, and buttons
-% 2012.09.27 - Added button-based stage and function areas
-% 2012.10.03 - Added stage gpsa_do callback and fleshed out tag
-% 2012.11.05 - Modified height parameter
-% 2013.04.25 - GPS1.8 Changed subset design to condition hierarchy
-% 2013.06.11 - Refresh status now also re-investigates the status
-% 2013.06.18 - Cleaning up declarations a bit
+% 2012-09-17 Created
+% 2012-09-19 Added callbacks and override toggle
+% 2012-09-21 Added stage, function, and queue functionality
+% 2012-09-26 Removed stage, function, queue, and buttons
+% 2012-09-27 Added button-based stage and function areas
+% 2012-10-03 Added stage gpsa_do callback and fleshed out tag
+% 2012-11-05 Modified height parameter
+% 2013-04-25 GPS1.8 Changed subset design to condition hierarchy
+% 2013-06-11 Refresh status now also re-investigates the status
+% 2013-06-18 Cleaning up declarations a bit
+% 2014-01-06 GPS1.9 Momentarily removed PLV stage
 
 state = gpsa_get;
 
@@ -137,7 +138,7 @@ state.gui.stage_title = uicontrol(state.gui.fig, 'Style', 'Text',...
     'BackgroundColor', state.gui.bgcolor,...
     'String', 'Stages', 'FontSize', 10);
 
-stage_list = {'Utilities', 'MRI', 'MEG', 'MNE', 'PLV', 'Granger'};
+stage_list = gps_presets('stagenames');
 stage_tags = gps_presets('stages');
 
 for i = 1:length(stage_tags)
