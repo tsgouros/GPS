@@ -1,12 +1,13 @@
 function gpsa_color_draw
 % Draws the colors for status in for GPS: Analysis
 %
-% Author: A. Conrad Nied (conrad.logos@gmail.com)
+% Author: Alexander Conrad Nied (anied@cs.washington.edu)
 %
 % Changelog:
-% 2012.10.03 - Created
-% 2012.11.12 - Accounts for near complete ready/progress
-% 2013.07.08 - In GPS1.8, added done but "unfinished" coloring
+% 2012.10.03 Created
+% 2012.11.12 Accounts for near complete ready/progress
+% 2013.07.08 In GPS1.8, added done but "unfinished" coloring
+% 2014-01-06 GPS1.9 Disabling PLV for now
 
 state = gpsa_get;
 status = state.gui.status;

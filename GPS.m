@@ -1,11 +1,31 @@
 function GPS
 % Opens a GUI to direct the user on which GUI they would like to start up
 %
-% Author: A. Conrad Nied
+% Author: Alexander Conrad Nied (anied@cs.washington.edu)
 %
 % Changelog:
 % 2013.04.03 - Created for GPS1.8
 % 2013.07.02 - Gets figure number from preset now
+%
+% GPS is a GUI-based program composed by David Gow and members of his lab
+% at the Massachusetts General Hospital to automate MNE and FSL analyses
+% of MR-constrained MEG/EEG data and to perform Kalman filter based Granger
+% analyses of those data.
+%
+% Copyright (C) 2014  Alexander Conrad Nied and David Gow
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %% Setup GUI parameters
 
