@@ -38,15 +38,20 @@ switch lower(name)
     case {'gpspnum', 'gpspfig', 'plotting figure'}
         preset = 6757000;
     case {'dir', 'directory'}
-        preset = '/autofs/cluster/dgow/GPS1.9/GPS';
+        preset = '/Users/tomfool/tech/19/gow/GPS';
+        % preset = '/autofs/cluster/dgow/GPS1.9/GPS';
     case {'functions', 'functiondir', 'fdir'}
-        preset = '/autofs/cluster/dgow/GPS1.9/GPS/functions';
+        preset = '/Users/tomfool/tech/19/gow/GPS/functions';
+        % preset = '/autofs/cluster/dgow/GPS1.9/GPS/functions';
     case {'parameters', 'parameterdir', 'pdir'}
-        preset = '/autofs/cluster/dgow/GPS1.9/GPS/parameters';
+        preset = '/Users/tomfool/tech/19/gow/GPS/parameters';
+        % preset = '/autofs/cluster/dgow/GPS1.9/GPS/parameters';
     case {'images', 'imagedir', 'idir'}
-        preset = '/autofs/cluster/dgow/GPS1.9/GPS/images';
+        preset = '/Users/tomfool/tech/19/gow/GPS/images';
+        % preset = '/autofs/cluster/dgow/GPS1.9/GPS/images';
     case {'logs', 'logdir', 'ldir'}
-        preset = '/autofs/cluster/dgow/GPS1.9/GPS/logs';
+        preset = '/Users/tomfool/tech/19/gow/GPS/logs';
+        % preset = '/autofs/cluster/dgow/GPS1.9/GPS/logs';
     case {'study'}
         preset = 'SampleStudy';
     case {'stages'}
