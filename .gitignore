@@ -13,3 +13,6 @@ WPM
 
 # Mac stuff
 .DS_Store
+
+# WE SHOULD NOT BE COMMITTING .mat FILES TO SOURCE CODE CONTROL
+*.mat
