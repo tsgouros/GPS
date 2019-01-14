@@ -45,9 +45,9 @@ if(~isempty(strfind(operation, 'c')))
     end
     
     %% 1) Do the first freesurfer auto-recon
-    
-    unix_command = sprintf('recon-all -autorecon1 -s %s -i %s',...
-        subject.name, subject.mri.first_mpragefile);
+       %% Added explicit reference to fshome.  -tsg
+    unix_command = sprintf('%s/bin/recon-all -autorecon1 -s %s -i %s',...
+        state.fshome, subject.name, subject.mri.first_mpragefile);
     unix(unix_command);
     
     % Record the process

@@ -34,9 +34,9 @@ if(~isempty(strfind(operation, 'c')))
     tbegin = tic;
     
     %% Do the third freesurfer auto-recon
-    
-    unix_command = sprintf('recon-all -autorecon3 -s %s',...
-        subject.name);
+       %% Added explicit ref to fshome.   -tsg
+    unix_command = sprintf('%s/bin/recon-all -autorecon3 -s %s',...
+        state.fshome, subject.name);
     unix(unix_command);
     
     % Record the process

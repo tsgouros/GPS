@@ -48,7 +48,10 @@ if(~isempty(strfind(operation, 'c')))
     switch choice
         case 'Bourget'
             % Use the findsession terminal command to find the file
-            [~, returned_text] = unix(['findsession ' subject.name]);
+            %% Added explicit reference to fshome.  -tsg
+            fscommand = sprintf('%s/bin/findsession %s',...
+                                state.fshome, subject.name)
+            [~, returned_text] = unix(fscommand);
             
             % Cut out the part of the returned text that says were the file is
             % located

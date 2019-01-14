@@ -29,12 +29,12 @@ end
 
 % If it is proper to do the function
 if(~isempty(strfind(operation, 'c')))
-    
+
     study = gpsa_parameter(state, state.study);
     subject = gpsa_parameter(state, state.subject);
     state.function = 'gpsa_meg_import';
     tbegin = tic;
-    
+
     % Functional instructions
     %% 0) Setup Subject Folders
     dir_scans = gps_filename(subject, 'meg_scan_dir');
@@ -43,11 +43,11 @@ if(~isempty(strfind(operation, 'c')))
     [~, ~, ~] = mkdir(gps_filename(study, subject, 'meg_events_dir'));
     [~, ~, ~] = mkdir(gps_filename(study, subject, 'meg_evoked_dir'));
     [~, ~, ~] = mkdir(gps_filename(study, subject, 'meg_images_dir'));
-    
+
     %% 1) Declare which megraid harddrive the data is saved to
     raid = inputdlg({'Megraid Harddrive'}, 'MEG Process', 1, {subject.meg.raid});
     subject.meg.raid = raid{1};
-    
+
     %% 2) Find the directory with the data
     subject.meg.sourcedir = sprintf('/space/megraid/%s/MEG/%s/subj_%s',...
         subject.meg.raid, study.meg.raid_pi, subject.name);
@@ -61,45 +61,45 @@ if(~isempty(strfind(operation, 'c')))
         subject.meg.sourcedir = uigetdir(['/space/megraid/' subject.meg.raid '/MEG/' study.meg.raid_pi],...
             'Select the directory with the raw meg files');
     end
-    
+
     %% 3) Copy the Data
-    
+
     % Complex Command that gives user feedback
     fprintf('Copying Files from %s to %s\n', subject.meg.sourcedir, dir_scans);
     files = dir(subject.meg.sourcedir);
     N_files = length(files);
-    
+
     for i_file = 1:N_files % For Each file
         filename = files(i_file).name;
-        
+
         if(~strcmp(filename, '.') && ~strcmp(filename, '..')); % If the file is not a linux folder item
-            
+
             % Show progress in command window
             fprintf('Copying file %2d/%2d: %s\n', i_file, N_files, filename);
-            
+
             % Copy file over
             copyfile([subject.meg.sourcedir '/' filename], dir_scans);
-            
+
             % Open permissions if necessary
             unix_command = sprintf('chmod ug+rw %s/%s',...
                 dir_scans, filename);
             unix(unix_command);
-            
-            % Check channel alignment
-            unix_command = sprintf('mne_check_eeg_locations --fix --file %s/%s',...
-                dir_scans, filename);
+
+            % Check channel alignment (with explicit mnehome ref -tsg)
+            unix_command = sprintf('%s/bin/mne_check_eeg_locations --fix --file %s/%s',...
+                                   state.mnehome, dir_scans, filename);
             unix(unix_command);
-            
+
         end % if linux folder direct
     end % For each file
-    
-    
+
+
     %% Save Data and Record History
 
     % Record the process
     gpsa_parameter(subject);
     gpsa_log(state, toc(tbegin));
-    
+
 end % If we should do the function
 
 %% Add to the report concerning the progress
@@ -113,7 +113,7 @@ end
 
 %% Prepare the report and output
 
-if(nargout == 1 && exist('report', 'var')); 
+if(nargout == 1 && exist('report', 'var'));
     varargout{1} = report;
 end
 

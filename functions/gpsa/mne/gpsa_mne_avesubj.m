@@ -52,7 +52,8 @@ if(~isempty(strfind(operation, 'c')))
     if(~exist(folder, 'dir')); mkdir(folder); end
     fprintf(desc_file,'\ndeststc %s\n',...
         gps_filename(study, condition, 'mne_stc_avesubj'));
-    unix_command = sprintf('mne_average_estimates --desc %s', desc_filename);
+    %% Added explicit mnehome reference.  -tsg
+    unix_command = sprintf('%s/bin/mne_average_estimates --desc %s', state.mnehome, desc_filename);
     unix(unix_command);
     
     % Record the process

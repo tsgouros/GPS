@@ -146,9 +146,10 @@ filename = sprintf('%s/label/rh.%s.annot', subject.mri.dir, condition.name);
 if(exist(filename, 'file')); delete(filename); end
 
 % olddir = cd(dir_annot);
-unix_command = sprintf('mris_label2annot --ctab %s%s --s %s --a %s --h lh', colortable_filename_lh, labelstr_lh, subject.name, condition.cortex.roiset);
+%% Added explicit reference to state.fshome -ts
+unix_command = sprintf('%s/bin/mris_label2annot --ctab %s%s --s %s --a %s --h lh', state.fshome, colortable_filename_lh, labelstr_lh, subject.name, condition.cortex.roiset);
 unix(unix_command);
-unix_command = sprintf('mris_label2annot --ctab %s%s --s %s --a %s --h rh', colortable_filename_rh, labelstr_rh, subject.name, condition.cortex.roiset);
+unix_command = sprintf('%s/bin/mris_label2annot --ctab %s%s --s %s --a %s --h rh', state.fshome, colortable_filename_rh, labelstr_rh, subject.name, condition.cortex.roiset);
 unix(unix_command);
 % cd(olddir);
 % unix_command = sprintf('mris_label2annot --ctab %s --ldir %s --s %s --a %s --h lh', colortable_filename, dir_annot, subject.name, condition.cortex.roiset);

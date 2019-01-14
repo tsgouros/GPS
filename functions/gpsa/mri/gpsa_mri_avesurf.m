@@ -41,7 +41,8 @@ if(~isempty(strfind(operation, 'c')))
     subjects = condition.subjects;
     
     % Form UNIX command for freesurfer to make the average subject surface
-    unix_command = sprintf('make_average_subject --out %s --subjects', condition.cortex.brain);
+    %% Added explicit reference to fshome.  -tsg
+    unix_command = sprintf('%s/bin/make_average_subject --out %s --subjects', state.fshome, condition.cortex.brain);
     
     % Append the names of each subject to the unix command
     for i_subject = 1:length(subjects)
@@ -71,7 +72,8 @@ if(~isempty(strfind(operation, 'c')))
         state.subject = subjects{i_subject};
         
         tlocal = tic;
-        unix_command = sprintf('mne_make_morph_maps --from %s --to %s', state.subject, condition.cortex.brain);
+        %% Added explicit reference to mnehome.  -tsg
+        unix_command = sprintf('%s/bin/mne_make_morph_maps --from %s --to %s', state.mnehome, state.subject, condition.cortex.brain);
         [~, ~] = unix(unix_command);
         gpsa_log(state, toc(tlocal), unix_command);
     end

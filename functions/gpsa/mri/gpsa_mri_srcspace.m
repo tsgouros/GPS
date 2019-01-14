@@ -42,14 +42,14 @@ if(~isempty(strfind(operation, 'c')))
         overstring = '';
     end
     
-    % Run the unix command
+    % Run the unix command (with explicit reference to mnehome.  -tsg)
     if(isfield(state, 'plvflag') && state.plvflag)
-        unix_command = sprintf('mne_setup_source_space%s --spacing 5 --subject %s',...
-            overstring, subject.name);
+        unix_command = sprintf('%s/bin/mne_setup_source_space%s --spacing 5 --subject %s',...
+            state.mnehome, overstring, subject.name);
         subject.mri.ico = 5;
     else
-        unix_command = sprintf('mne_setup_source_space%s --subject %s',...
-            overstring, subject.name);
+        unix_command = sprintf('%s/bin/mne_setup_source_space%s --subject %s',...
+            state.mnehome, overstring, subject.name);
         subject.mri.ico = 7;
     end
     

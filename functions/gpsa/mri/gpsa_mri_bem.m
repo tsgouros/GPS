@@ -43,9 +43,9 @@ if(~isempty(strfind(operation, 'c')))
         overstring = '';
     end
     
-    % Run the unix command
-    unix_command = sprintf('mne_watershed_bem%s --subject %s',...
-        overstring, subject.name);
+    % Run the unix command (with explicit mnehome ref -tsg)
+    unix_command = sprintf('%s/bin/mne_watershed_bem%s --subject %s',...
+                           state.mnehome, overstring, subject.name);
     unix(unix_command);
     
     gpsa_log(state, toc(tbegin), unix_command);

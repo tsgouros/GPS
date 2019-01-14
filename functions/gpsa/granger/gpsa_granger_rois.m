@@ -75,8 +75,9 @@ if(~isempty(strfind(operation, 'c')))
             end
             
             tlocal = tic;
-            unix_command = sprintf('mne_morph_labels --from %s --to %s --labeldir %s --smooth 5',...
-                condition.cortex.brain, subject.name, roidir);
+            %% Added explicit ref to mnehome.  -tsgouros
+            unix_command = sprintf('%s/bin/mne_morph_labels --from %s --to %s --labeldir %s --smooth 5',...
+                state.mnehome, condition.cortex.brain, subject.name, roidir);
             [~, ~] = unix(unix_command);
             gpsa_log(state, unix_command, toc(tlocal));
         end

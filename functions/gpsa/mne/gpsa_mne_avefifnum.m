@@ -8,7 +8,8 @@ function num = gpsa_mne_avefifnum(state)
 
 
 subject = gpsa_parameter(state, state.subject);
-unix_command = sprintf('mne_show_fiff --verbose --indent 1 --in %s | grep "    206 = comment"', subject.mne.avefile);
+ %% Added explicit mnehome reference.  -tsg  
+unix_command = sprintf('%s/bin/mne_show_fiff --verbose --indent 1 --in %s | grep "    206 = comment"', state.mnehome, subject.mne.avefile);
 [~, results] = unix(unix_command);
 
 num = 1;

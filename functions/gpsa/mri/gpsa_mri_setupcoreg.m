@@ -39,9 +39,9 @@ if(~isempty(strfind(operation, 'c')))
         overstring = '';
     end
     
-    % Run the unix command
-    unix_command = sprintf('mne_setup_mri%s --subject %s',...
-        overstring, subject.name);
+    % Run the unix command (with explicit reference to mnehome.  -tsg)
+    unix_command = sprintf('%s/bin/mne_setup_mri%s --subject %s',...
+                           state.mnehome, overstring, subject.name);
     unix(unix_command);
     
     % Record the process

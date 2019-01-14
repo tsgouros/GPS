@@ -13,17 +13,17 @@ function GPS
 % analyses of those data.
 %
 % Copyright (C) 2014  Alexander Conrad Nied and David Gow
-% 
+%
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
 % the Free Software Foundation, either version 3 of the License, or
 % (at your option) any later version.
-% 
+%
 % This program is distributed in the hope that it will be useful,
 % but WITHOUT ANY WARRANTY; without even the implied warranty of
 % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % GNU General Public License for more details.
-% 
+%
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -31,6 +31,23 @@ function GPS
 
 % Initialize the state structure
 state.name = 'state';
+
+  % We are going to cheat here by adding explicit paths to the MNE and
+  % freesurfer software.
+  %% This turns out to be unnecessary because the state variable does
+  % not appear to be passed down consistently.  -ts
+  state.fshome = getenv('FREESURFER_HOME');
+  if (state.fshome == "")
+    state.fshome = '/Applications/freesurfer';
+  end
+  state.fsfasthome = getenv('FSFAST_HOME');
+  if (state.fsfasthome == "")
+    state.fsfasthome = '/Applications/freesurfer/fsfast';
+  end
+  state.mnehome = getenv('MNE_ROOT');
+  if (state.mnehome == "")
+    state.mnehome = '/Applications/MNE-2.7.0-3106-MacOSX-i386';
+  end
 
 % Initialize the state structure
 state.dir = gps_presets('dir');

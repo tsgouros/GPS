@@ -59,9 +59,9 @@ if(~isempty(strfind(operation, 'c')))
         end
         invfile = sprintf('%s-inv.fif', invfile);
         
-        % Process unix command
-        unix_command = sprintf('mne_do_inverse_operator --inv %s --fwd %s --senscov %s --subject %s --noiserankold --loose 0.2%s',...
-            invfile, subject.mne.fwdfile, subject.mne.covfile, subject.name, options);
+        % Process unix command (Added explicit mnehome. -tsg)
+        unix_command = sprintf('%s/bin/mne_do_inverse_operator --inv %s --fwd %s --senscov %s --subject %s --noiserankold --loose 0.2%s',...
+            state.mnehome, invfile, subject.mne.fwdfile, subject.mne.covfile, subject.name, options);
         unix(unix_command);
     end
     

@@ -42,8 +42,9 @@ if(~isempty(strfind(operation, 'c')))
     end
     
     % Process unix command (use --homog?)
-    unix_command = sprintf('mne_setup_forward_model --subject %s --surf --ico 4%s',...
-        subject.name, overstring);
+    %% Added explicit ref to mnehome.  -tsg
+    unix_command = sprintf('%s/bin/mne_setup_forward_model --subject %s --surf --ico 4%s',...
+                           state.mnehome, subject.name, overstring);
     unix(unix_command);
     
     % Record the process

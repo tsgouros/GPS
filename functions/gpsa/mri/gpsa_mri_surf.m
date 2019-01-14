@@ -33,8 +33,8 @@ if(~isempty(strfind(operation, 'c')))
     
     %% Do the second freesurfer auto-recon
     
-    unix_command = sprintf('recon-all -autorecon2 -s %s',...
-        subject.name);
+    unix_command = sprintf('%s/bin/recon-all -autorecon2 -s %s',...
+        state.fshome, subject.name);
     unix(unix_command);
     
     % Record the process

@@ -152,8 +152,9 @@ if(~isempty(strfind(operation, 'c')))
     commandfile = sprintf('%s/avewaves_command.txt',...
        dir_cmd);
     fid = fopen(commandfile, 'w');
-    
-    fprintf(fid, 'mne_process_raw --lowpass 50 \\\n'); % 50 not 60 now
+
+    %% Added an explicit reference to mnehome. -tsg
+    fprintf(fid, '%s/bin/mne_process_raw --lowpass 50 \\\n', state.mnehome); % 50 not 60 now
     
     % For each block
     for i_block = 1:length(subject.blocks)

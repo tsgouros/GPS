@@ -36,9 +36,9 @@ if(~isempty(strfind(operation, 'c')))
     
     %% Find the first T1 MPRAGE file
     
-    % Unpack the scanner files
-    unix_command = sprintf('unpacksdcmdir -src %s -targ %s -scanonly %s/unpack.log',...
-        subject.mri.rawdir, subject.mri.rawdir, subject.mri.rawdir);
+    % Unpack the scanner files (added explicit ref to fshome.  -tsg)
+    unix_command = sprintf('%s/bin/unpacksdcmdir -src %s -targ %s -scanonly %s/unpack.log',...
+        state.fshome, subject.mri.rawdir, subject.mri.rawdir, subject.mri.rawdir);
     unix(unix_command);
     
     % Scan through the unpack log for the name of the first T1 MPRAGE
