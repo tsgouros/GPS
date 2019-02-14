@@ -35,8 +35,8 @@ if(~isempty(strfind(operation, 'c')))
     
     %% Do the third freesurfer auto-recon
        %% Added explicit ref to fshome.   -tsg
-    unix_command = sprintf('%s/bin/recon-all -autorecon3 -s %s',...
-        state.fshome, subject.name);
+    unix_command = sprintf('%s $FREESURFER_HOME/bin/recon-all -autorecon3 -s %s',...
+        state.setenv, subject.name);
     unix(unix_command);
     
     % Record the process

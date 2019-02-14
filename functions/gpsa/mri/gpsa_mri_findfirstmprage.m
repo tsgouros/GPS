@@ -37,9 +37,12 @@ if(~isempty(strfind(operation, 'c')))
     %% Find the first T1 MPRAGE file
     
     % Unpack the scanner files (added explicit ref to fshome.  -tsg)
-    unix_command = sprintf('%s/bin/unpacksdcmdir -src %s -targ %s -scanonly %s/unpack.log',...
-        state.fshome, subject.mri.rawdir, subject.mri.rawdir, subject.mri.rawdir);
-    unix(unix_command);
+    unix_command = sprintf('%s $FREESURFER_HOME/bin/unpacksdcmdir -src %s -targ %s -scanonly %s/unpack.log',...
+        state.setenv, subject.mri.rawdir, subject.mri.rawdir, subject.mri.rawdir);
+    [status, cmdout] = unix(unix_command);
+    
+    
+    disp(cmdout);
     
     % Scan through the unpack log for the name of the first T1 MPRAGE
     % file
@@ -67,7 +70,7 @@ end % If we should do the function
 if(~isempty(strfind(operation, 'p')))
     subject = gpsa_parameter(state, state.subject);
     report.ready = length(dir(subject.mri.rawdir)) > 2;
-    report.progress = ~~exist(subject.mri.first_mpragefile, 'file');
+    report.progress = exist(subject.mri.first_mpragefile, 'file')==2;
     report.finished = report.progress == 1;
 end
 

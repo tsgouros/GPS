@@ -40,8 +40,8 @@ if(~isempty(strfind(operation, 'c')))
     end
     
     % Run the unix command (with explicit reference to mnehome.  -tsg)
-    unix_command = sprintf('%s/bin/mne_setup_mri%s --subject %s',...
-                           state.mnehome, overstring, subject.name);
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_setup_mri%s --subject %s',...
+                           state.setenv, overstring, subject.name);
     unix(unix_command);
     
     % Record the process

@@ -41,8 +41,8 @@ if(~isempty(strfind(operation, 'c')))
     subjects = condition.subjects;
     
     % Form UNIX command for freesurfer to make the average subject surface
-    %% Added explicit reference to fshome.  -tsg
-    unix_command = sprintf('%s/bin/make_average_subject --out %s --subjects', state.fshome, condition.cortex.brain);
+    unix_command = sprintf('%s $FREESURFER_HOME/bin/make_average_subject --out %s --subjects',...
+                           state.setenv, condition.cortex.brain);
     
     % Append the names of each subject to the unix command
     for i_subject = 1:length(subjects)

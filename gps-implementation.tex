@@ -1,0 +1,325 @@
+\documentclass[11pt]{article}
+
+\usepackage{mathptmx}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{lettrine}
+\usepackage{eso-pic}
+\usepackage{picture} % explicit units in picture commands
+\usepackage{tikz}
+
+\begin{document}
+
+\title{GPS Implementation Notes}
+\author{Tom Sgouros}
+
+\newcommand{\dir}[1]{\texttt{#1}}
+\newcommand{\exec}[1]{\texttt{#1}}
+
+\newcommand{\fs}{Freesurfer\xspace}
+
+\maketitle
+
+\section{A look at the data}
+
+Roughly speaking, GPS is a processor for MEG data, with MRI data used
+to help place it in context within the brain.
+
+
+\subsection{MRI}
+
+GPS uses MRI data to localize signals found in the MEG data, and for
+the visualization of processing results.  There is a certain amount of
+processing of the raw MRI data to squeeze it into a form that is
+usable by the MEG processing stream, and we describe that here.
+
+Most of the processing of the MRI data is accomplished by a software
+suite known as \fs.  This is used for segmenting the raw data
+into surfaces, both the cortical surface and surfaces related to the
+skull (inner, outer, skin).  The software also generates an inflated
+view of the cortical surface, as well as a spherical view.
+
+You can use \exec{freeview} to check out some of the results, which
+are found in the \dir{MRI} subdirectory.  Within that directory,
+you'll find subdirectories for each of the subjects, plus one for an
+average subject, constructed from the other subjects in the study.
+Within these, you'll find a number of subdirectories corresponding to
+the various processing steps between the raw MRI and the spherical
+inflation of the cortical surface.
+
+\subsection{MEG}
+
+The MEG data is at the heart of GPS.  The data consists of a time
+series for each of the MEG detectors attached to the subject, along
+with the same for each of the EEG detectors.  There are over 300 of
+the former and 70 of the latter.  Before feeding it to the Granger
+processing, the MEG data is aligned with the experiment's events, and
+combined with the MRI data to derive a spatial location within the
+brain for data using the MNE software suite.  The data records at
+these spatial locations are the input to the Granger analysis.
+
+The processed MEG data and the data byproducts from processing it with
+MNE can be found in the \dir{MEG} and \dir{MNE} directories.
+
+\subsection{Data file and directory structure}
+
+A data directory will contain these five subdirectories: MRIraw, MRI,
+MEG, MNE, and Granger.
+
+
+\subsection{Data flow}
+
+The inputs to the whole system are:
+
+\newcommand{\dataflow}[3]{\item #1\par\textbf{Data In:~}#2\par%
+  \textbf{Data Out:~}#3\par}
+
+MRI Processing
+
+\begin{itemize}
+
+\dataflow{Import}{Data from outside GPS, maybe Martinos DBMS
+  (Bourget), maybe somewhere else on a disk.}{Data
+  is put into the MRIraw folder for that subject.}
+MRI data -- DICOM files. High resolution structural slices of a
+  head, instantaneous data.  Import is Martinos specific stuff where
+  it's getting the DICOM data from the Martinos DBMS (Bourget).
+
+\dataflow{Find T1-MPRAGE}{MRI data in MRIraw}{Modifications to MAT
+  files in GPS/Parameters, and a summary file and unpack.log in the MRIraw
+  directory} Finds from the DICOM file 
+the high-resolution structural MRIs
+  that we are interested in -- the T1 data.  We are not interested in the other
+  stuff, such functional imagery, initial localizers, DTI, etc.
+
+  note: This part of the procedure calls the \fs function
+  \verb+unpacksdcmdir+, which has a timeout in it of 20 seconds.  A
+  sample dataset run on my laptop easily takes more than that to
+  process, even though it's all functioning just fine.  I hacked the
+  tcl script to change the timeout. (Line 983 of unpcksdcmdir.tcl)
+
+From within Matlab on my Mac (OS X 10.12), I get this error from \verb+mri_parse_sdcmdir+:
+
+\begin{verbatim}
+mri_parse_sdcmdir --sortbyrun --d GBU_2/MRIraw/GBU_12 
+                              --o GBU_2/MRIraw/GBU_12/dicomdir.sumfile 
+                              --status GBU_2/MRIraw/GBU_12/parse.status
+
+
+dyld: lazy symbol binding failed: Symbol not found: ___emutls_get_address
+  Referenced from: /Applications/freesurfer/bin/../lib/gcc/lib/libgomp.1.dylib
+  Expected in: /usr/lib/libSystem.B.dylib
+
+dyld: Symbol not found: ___emutls_get_address
+  Referenced from: /Applications/freesurfer/bin/../lib/gcc/lib/libgomp.1.dylib
+  Expected in: /usr/lib/libSystem.B.dylib
+\end{verbatim}
+
+From outside Matlab, runs fine.  This was addressed by disabling
+something called System Integrity Protection (SIP), which is some kind
+of extra-OS supervision of certain system directories.  Apparently it
+also governs how environments are inherited.  Specifically, it
+prevents environment variables associated with dynamic libraries
+(e.g. DYLD\_LIBRARY\_PATH) from being inherited when launching
+protected processes.  To disable SIP, boot into the single user (hold
+down cmd-R during boot), bring up a terminal window, and do
+\verb+csrutil disable; reboot+.
+  
+
+\dataflow{Organize}{MRIraw}{MRI}
+This moves the raw data into place for further processing.  For each subject,
+it creates an \verb+MRI+ directory, and populates it with lightly-processed
+MRI data as well as scripts, logs.  Runs \verb+mri_convert.bin+,
+\verb+mri_add_xform_to_header, +\verb+mri_normalize+,
+\verb+mri_em_register+, \verb+mri_watershed+, at least.  Creates and populates
+subdirectories mri, scripts, and touch, and empty placeholders label, stats,
+surf, tmp, and trash.
+
+You will need a valid \fs license
+to proceed past this point.  Get it from
+\url{http://surfer.nmr.mgh.harvard.edu/registration.html}.
+
+\dataflow{Build surfaces}{Data in MRI/subject directories}{files in label,
+  mri/*.mgz, files in stats, surf, touch} Invokes the \fs 
+\verb+recon-all+ command.  Also runs \verb+mri_em_register+,
+\verb+mri_ca_register+.  This is a long one, 4 hours on my laptop.
+
+\dataflow{FS average}{Data in MRI/surf, others}{surf/*h.sphere and
+  surf/*h.sphere.reg} -- copies an ``average'' subject from FS software. 
+  Seppo says Nothing to do with the actual data, but that does not
+  appear to be true.  Another input.  Runs
+  \verb+mris_sphere+, \verb+mris_register+, \verb+mris_make_surfaces+,
+  \verb+mris_convert+, \verb+mri_volmask+,
+  \verb+mris_anatomical_stats+, \verb+mri_aparc2aseg+,
+  \verb+mri_binarize+, \verb+mri_segstats+,
+  \verb+mri_label2label.bin+.  Also quite long.
+
+\dataflow{Source space}{}{MRI/subject/bem} Takes cortical surface that \fs
+  extracted, makes a grid of 3-4mm dipoles, models for the brain
+  activity. Hypothesizing electrical sources at each dipole.  Still
+  purely MRI processed data.  Create a tesselation of the surface and
+  the nodes are the hypothesized dipoles.  Invokes
+  \verb+mne_setup_source_space+. 
+
+\dataflow{Setup coreg}{}{MRI/subject/mri/brain-neuromag} creates
+directories, or something, the 
+  coregistration step is where the MRI and MEG data get combined. This
+  is not that step, but is somehomw getting ready for it.  Invokes
+  \verb+mne_setup_mri+.
+
+\dataflow{BE model}{}{} Boundary element model.  Find boundary to brain,
+  differentiate with skull.  Invokes \verb+mri_watershed+
+
+\item BE model to fif -- Convert model to fif file, nothing more?
+
+\item Average surface -- have to come back to this one once you have
+  all the subjects in the study completed to here.  Averages all of
+  them so you get one average subject.
+
+\end{itemize}
+
+
+\begin{itemize}
+
+\item MEG raw data -- Import a raw fif file.  Copies it somewhere,
+  probably to the scans directory for each subject.  Time series for
+  each sensor on the scalp.
+
+\item Extract event -- Locate the stimulus in time.  The events are
+  encoded inside the raw fif file.  Extracted and stored in a .eve
+  file.  Each trigger has a number.
+
+\item Process events -- Adriana does not use.  Doesn't do anything?
+  Triggers an experiment-specific script, run when you press this
+  button.  Create the `grouped' files.
+
+\item Bad channels -- MNE function looks at individual files,
+  interactive thing.  Before you do this, go to the `mne browse raw' step
+  to note which channels are bad, write them down, and note them
+  here.  Creates a text file with a list of bad channels.
+
+\item EOG projections -- go back to utilities, use mne browse raw to
+  find eye blink events, make a fif file describing them, and specify
+  the location of that file here.  Look in scans, the word is
+  ``projection''  see the file 'proj.fif'.
+
+\item Coregistration -- Go to utilities, use mne analyze, see
+  cookbook, mapping the meg data to mri data.  Creates a cor- fif
+  file, maybe in the MRI directory.  This step just identifies the
+  file location and name.
+
+\end{itemize}
+
+\begin{itemize}
+
+\item Average waves -- Creates event-related responses.  Finds data
+  within the time window defined by each event.  Averaging across all
+  trials for each individual subject.  look in MNE/*.ave.fif, all kinds of other ave
+  files, descriptions, the script, and so on. commands, blocks, higher
+  level ave files, too.
+
+\item Forward solution -- Creates forward.fif file, look in
+  MNE/*.fwd.fif.  Requires co-registration step.
+
+\item Inverse solution -- creates *.inv.fif files.
+
+\item Evoked trials -- saves in a .mat file, data around each event?
+
+\item Make .stc -- source time code, putting MRI and MEG toether.
+  Tesselation of \fs is very small triangles.  So we decimate
+  the grid here and impute the time series for each source point.
+  Look in the stcs subdirectory.
+
+\item Morphed stc -- transforming the individual data onto the
+  spherical surface, so they can be averaged in the next step.
+
+\item Average subject -- create the average subject from the
+  collection of individuals.  Who all must be complete before you get
+  here. Check out the average/stcs directory.
+
+\end{itemize}
+
+
+\begin{itemize}
+
+\item Process ROIs --  Need to have the ROIs already by now.
+  This is in the Utilities collection of buttons.  Look in
+  Granger/*/rois directory.  These files are created by the GPS:ROIs
+  utility.  Output maybe some .mat files?  ROIs are specified for an
+  average brain.  The process step transforms locations to
+  individuals, creates labels for the individual.
+
+\item MNI Coordinates -- For each ROI, finds coordinates in a
+  standardized brain.  Montreal Neuro Institute.
+
+\item ROI Timecourses -- From the ROI, pick a representative vertex
+
+\item see cookbook for Consolidate.
+
+\item Compute Granger -- puts .mat files into the Granger/results/raw
+  directory.  Computes all Granger possibilities.
+
+\item Null hypothesis --
+
+
+
+
+\item information about experimental paradigm
+
+\end{itemize}
+
+
+
+
+
+
+Under the ``MEG Preprocessing'' menu, it appears that data is imported
+from somewhere exterior to the \verb+<data>+ tree, and:
+
+\begin{enumerate}
+
+\item The ``Import'' option
+stuffs it into \verb+meg_scan_dir+ which appears to default to
+\verb+<data>/MEG/<subject>/scans+.  Unfortunately the source file
+appears to be something like \verb+/space/megraid/*/MEG/*/subj_*+.
+Don't know how to fix that.
+
+\item The ``Extract Events'' option seems to look for stuff in
+  \verb+<data>/MEG/<subject>/scans+ and put the output in
+  \verb+<data>/MEG/<subject>/events+
+
+\item There are lots of variants of the \verb+gpsa_meg_eveproc+
+  function.  Don't know what they're for.  The process events option
+  seems to want data files in
+  \verb+<data>/MEG/<subject>/events/*_*.eve+  This is the
+  \verb+meg_events_block+ option of \verb+gps_filename.m+.  The output
+  seems to be steered back to the same directory, with files called
+  \verb+*_grouped.eve+ which is the \verb+meg_events_grouped_gen+
+  option of \verb+gps_filename.m+.
+
+\item
+
+\end{enumerate}
+
+\section{Looking at the code}
+
+The analysis functions all seem to operate with two parameters, the
+state and a flag, a `t', a `c', or a `p'.  I can't find anywhere in
+the comments what these stand for, but they seem like `p' for
+`progress', `c' for `compute', and `t' for, well I don't know,
+`type'?  The \verb+gpsa_do()+ function calls the `t' version, and that
+tells it something about whether the result is subject specific or
+condition specific.  Then it calls the same function with a `p',
+presumably to see whether it needs to be computed at all, and if so,
+it calls the same function yet one more time with a `c'.
+
+This allows each function to set its own conditions on whether it runs
+or not, which seems like a good thing, but I wish I knew better what
+the conditions were.
+
+
+
+\end{document}

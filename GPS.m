@@ -32,25 +32,14 @@ function GPS
 % Initialize the state structure
 state.name = 'state';
 
-  % We are going to cheat here by adding explicit paths to the MNE and
-  % freesurfer software.
-  %% This turns out to be unnecessary because the state variable does
-  % not appear to be passed down consistently.  -ts
-  state.fshome = getenv('FREESURFER_HOME');
-  if (state.fshome == "")
-    state.fshome = '/Applications/freesurfer';
-  end
-  state.fsfasthome = getenv('FSFAST_HOME');
-  if (state.fsfasthome == "")
-    state.fsfasthome = '/Applications/freesurfer/fsfast';
-  end
-  state.mnehome = getenv('MNE_ROOT');
-  if (state.mnehome == "")
-    state.mnehome = '/Applications/MNE-2.7.0-3106-MacOSX-i386';
-  end
-
 % Initialize the state structure
 state.dir = gps_presets('dir');
+
+
+% We are going to cheat here by loading the necessary environment
+% variables for Freesurfer and MNE each time those programs are 
+% invoked, instead of relying on the inherited environment.
+state.setenv = sprintf("source %s/gps_init.bash; ", state.dir);
 
 % Get the position of the monitor
 state.gui.position.screen = get(0, 'ScreenSize');
@@ -94,7 +83,7 @@ set(state.gui.analysis, 'Position', [20, 125, 120, 25]);
 set(state.gui.analysis, 'BackgroundColor', [0.8 0.8 0.8]);
 set(state.gui.analysis, 'String', 'Analysis');
 set(state.gui.analysis, 'FontSize', 14);
-set(state.gui.analysis, 'Callback', 'GPSa;');
+set(state.gui.analysis, 'Callback', {@GPSa, state});
 % delete(' num2str(state.gui.fig) ');
 
 % Draw the Editor button

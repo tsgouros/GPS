@@ -20,7 +20,7 @@ function varargout = gpsa_mri_orgmri(varargin)
 
 %% Prepare a report on the type or progress of the data
 
-if(~isempty(strfind(operation, 't')))
+if(contains(operation, 't'))
     report.spec_subj = 1; % Subject specific?
     report.spec_cond = 0; % Condition specific?
 end
@@ -28,7 +28,7 @@ end
 %% Execute the process
 
 % If it is proper to do the function
-if(~isempty(strfind(operation, 'c')))
+if(contains(operation, 'c'))
     subject = gpsa_parameter(state, state.subject);
     study = gpsa_parameter(state, state.study);
     state.function = 'gpsa_mri_orgmri';
@@ -46,8 +46,8 @@ if(~isempty(strfind(operation, 'c')))
     
     %% 1) Do the first freesurfer auto-recon
        %% Added explicit reference to fshome.  -tsg
-    unix_command = sprintf('%s/bin/recon-all -autorecon1 -s %s -i %s',...
-        state.fshome, subject.name, subject.mri.first_mpragefile);
+    unix_command = sprintf('%s $FREESURFER_HOME/bin/recon-all -autorecon1 -s %s -i %s',...
+        state.setenv, subject.name, subject.mri.first_mpragefile);
     unix(unix_command);
     
     % Record the process
@@ -57,7 +57,7 @@ end % If we should do the function
 
 %% Add to the report concerning the progress
 
-if(~isempty(strfind(operation, 'p')))
+if(contains(operation, 'p'))
     subject = gpsa_parameter(state, state.subject);
     report.ready = ~~exist(subject.mri.first_mpragefile, 'file');
     report.progress = ~~exist(gps_filename(subject, 'mri_mgz'), 'file');
