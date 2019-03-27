@@ -12,6 +12,9 @@ function varargout = gpsa_mne_evoked(varargin)
 % 2013.04.30 - Moved GPS1.7/gpsa_granger_trials.m to MNE portion as
 % GPS1.8/gpsa_mne_evoked.m
 % 2013.05.03 - Asserts the check at the end of the process
+%
+% 2016.02.27 - [Seppo Ahlfors:] modified or commented out several lines..
+% 2018.07.13 - [Seppo Ahlfors:] changed hard-wired time limits to study.mne.start and stop
 
 %% Input
 
@@ -35,14 +38,19 @@ if(~isempty(strfind(operation, 'c')))
     
     fprintf('\tGetting all evoked responses from filtered block files\n');
     
-    time_start = -0.3;
-    time_stop  = 1.2;
+    %%%%%%%%%%%%%%%%% Modified by SA 2018-07-13  %%%%%%%%%%%%%%%%%%%%%
+    %time_start = -0.3;
+%%%%%%%% NOTE: these should probably not be hard-wired!!?? SA 2015-12-07 %%%%%%%
+    %time_stop  = 1.2;
+    time_start = study.mne.start / 1000; 
+    time_stop  = study.mne.stop / 1000;
     
     for i_block = 1:length(subject.blocks)
         block = subject.blocks{i_block};
         fprintf('\t\tBlock %s', block);
         
-        block_trialdata = subject.meg.behav.trialdata(strcmp({subject.meg.behav.trialdata.block}, block));
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%% commented out by SA 2016-02-27
+        %block_trialdata = subject.meg.behav.trialdata(strcmp({subject.meg.behav.trialdata.block}, block));
         
         block_filename = gps_filename(subject, 'meg_scan_filtered_block', ['block=' block]); %#ok<NASGU>
         events_filename = gps_filename(subject, 'meg_events_grouped_block', ['block=' block]);
@@ -76,7 +84,9 @@ if(~isempty(strfind(operation, 'c')))
         i_channels = 1:length(channel_names); %#ok<NASGU>
         
         % Get epochs
-        for i_event = 1:length(events)
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%% modified by SA 2016-02-27
+        %for i_event = 1:length(events)
+        for i_event = 1:length(events)-1
             fprintf('.');
             sample_start = floor(events(i_event, 1) + time_start * sfreq);
             sample_stop  =  ceil(events(i_event, 1) + time_stop  * sfreq);
@@ -96,9 +106,10 @@ if(~isempty(strfind(operation, 'c')))
             data(i_trial).sample_stop = sample_stop;
             data(i_trial).sample_event = events(i_event, 1);
             data(i_trial).event = events(i_event, 4);
-            if(isfield(block_trialdata, 'sample'))
-                data(i_trial).trialdata = block_trialdata([block_trialdata.sample] == data(i_trial).sample_event);
-            end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%% commented out by SA 2016-02-27
+            %if(isfield(block_trialdata, 'sample'))
+            %    data(i_trial).trialdata = block_trialdata([block_trialdata.sample] == data(i_trial).sample_event);
+            %end
             %         end
         end
         
