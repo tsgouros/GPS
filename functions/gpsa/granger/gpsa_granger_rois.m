@@ -17,6 +17,7 @@ function varargout = gpsa_granger_rois(varargin)
 % 2013.06.25 - Fixed some bugs in the new GPS system and added annotation
 % section.
 % 2013.07.10 - Performed using the condition brain rather than a study one
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -75,7 +76,7 @@ if(~isempty(strfind(operation, 'c')))
             end
             
             tlocal = tic;
-            %% Added explicit ref to mnehome.  -tsgouros
+            %% Added explicit ref to mnehome.  -tsg
             unix_command = sprintf('%s/bin/mne_morph_labels --from %s --to %s --labeldir %s --smooth 5',...
                 state.mnehome, condition.cortex.brain, subject.name, roidir);
             [~, ~] = unix(unix_command);
@@ -268,7 +269,10 @@ if(~isempty(strfind(operation, 'c')))
             options.parcellation_border = 2;
             
             % Draw mean activity
-            gps_brain_draw(drawdata, options);
+            %%%%%%%%%%%%%%% Commented out by SA 2015-06-16, because crashed
+            %%%%%%%%%%%%%%% with error: java.lang.IllegalArgumentException:
+            %%%%%%%%%%%%%%% adding a container to a container on a different GraphicsDevice 
+            %gps_brain_draw(drawdata, options);
             
             frame = getframe(gcf);
             filename = sprintf('%s/%s_%s_rois.png',...
@@ -327,3 +331,4 @@ if(nargout == 1 && exist('report', 'var'));
 end
 
 end % function
+
