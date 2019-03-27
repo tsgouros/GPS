@@ -32,8 +32,8 @@ if(~isempty(strfind(operation, 'c')))
     tbegin = tic;
 
     %% Added explicit reference to mnehome.  -tsg
-    unix_command = sprintf('%s/bin/mne_browse_raw --cd %s &',...
-                           state.mnehome, gps_filename(subject, 'meg_scan_dir'));
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_browse_raw --cd %s &',...
+                           state.setenv, gps_filename(subject, 'meg_scan_dir'));
     unix(unix_command);
     
     % Record the process

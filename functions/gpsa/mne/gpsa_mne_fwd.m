@@ -15,6 +15,7 @@ function varargout = gpsa_mne_fwd(varargin)
 % 2013.05.15 - Added routine to get subset for MEG or EEG only fwd solution
 % 2013.06.25 - Reverted status check to older version
 % 2013.07.02 - Updated bem check to gps_filename
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -61,8 +62,8 @@ if(~isempty(strfind(operation, 'c')))
     end % If the subset is MEG or EEG only
     
     % Process unix command.  (Added explicit mnehome. -tsg)
-    unix_command = sprintf('%s/bin/mne_do_forward_solution --fwd %s --spacing %d --meas %s --subject %s --mri %s%s%s',...
-        state.mnehome, subject.mne.fwdfile, spacing, subject.mne.avefile, subject.name, subject.mri.corfile, overstring, exclstring);
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_do_forward_solution --fwd %s --spacing %d --meas %s --subject %s --mri %s%s%s',...
+        state.setenv, subject.mne.fwdfile, spacing, subject.mne.avefile, subject.name, subject.mri.corfile, overstring, exclstring);
     unix(unix_command);
     
     % Record the process

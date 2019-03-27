@@ -13,6 +13,7 @@ function varargout = gpsa_mri_avesurf(varargin)
 % 2013.06.20 - Reverted the status check to the individual system
 % 2013.07.02 - Added some gps_filename defaults
 % 2013.07.10 - Condition brain instead of study brain
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -41,6 +42,7 @@ if(~isempty(strfind(operation, 'c')))
     subjects = condition.subjects;
     
     % Form UNIX command for freesurfer to make the average subject surface
+    %% Added explicit setting of environment variables.  -tsg
     unix_command = sprintf('%s $FREESURFER_HOME/bin/make_average_subject --out %s --subjects',...
                            state.setenv, condition.cortex.brain);
     
@@ -73,7 +75,8 @@ if(~isempty(strfind(operation, 'c')))
         
         tlocal = tic;
         %% Added explicit reference to mnehome.  -tsg
-        unix_command = sprintf('%s/bin/mne_make_morph_maps --from %s --to %s', state.mnehome, state.subject, condition.cortex.brain);
+        unix_command = sprintf('%s $MNE_ROOT/bin/mne_make_morph_maps --from %s --to %s', ...
+            state.setenv, state.subject, condition.cortex.brain);
         [~, ~] = unix(unix_command);
         gpsa_log(state, toc(tlocal), unix_command);
     end

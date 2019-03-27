@@ -13,6 +13,7 @@ function varargout = gpsa_meg_bad(varargin)
 % 2013.04.24 - Changed subset/subsubset to condition hierarchy
 % 2013.04.30 - Gets filenames from gps_filename now
 % 2013.07.10 - Tries to mark all .fif files now instead of just the raw ones.
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -80,8 +81,8 @@ if(~isempty(strfind(operation, 'c')))
         fclose(fid);
 
         % 3) Run the command to mark bad channels
-        unix_command = sprintf('%s/bin/mne_mark_bad_channels --bad %s %s',...
-                               state.mnehome,...  % explicit mnehome ref  -tsg
+        unix_command = sprintf('%s $MNE_ROOT/bin/mne_mark_bad_channels --bad %s %s',...
+                               state.setenv,...  % explicit mnehome ref  -tsg
                                badchannel_file,...
                                gps_filename(subject, 'meg_fif_gen'));
         [~, output] = unix(unix_command);
@@ -125,3 +126,4 @@ if(nargout == 1 && exist('report', 'var'));
 end
 
 end % function
+

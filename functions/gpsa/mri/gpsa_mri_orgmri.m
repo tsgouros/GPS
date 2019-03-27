@@ -13,6 +13,7 @@ function varargout = gpsa_mri_orgmri(varargin)
 % 2013.06.18 - Makes the study MRI dir if necessary
 % 2013.07.02 - Reverted status check to function specific and deletes old
 % MRI directory
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 

@@ -12,6 +12,7 @@ function varargout = gpsa_meg_eveext(varargin)
 % 2013.04.24 - Changed subset/subsubset to condition hierarchy
 % 2013.04.30 - Gets filenames from gps_filename.m
 % 2013.06.25 - Reverted status check to older version
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -44,8 +45,8 @@ if(~isempty(strfind(operation, 'c')))
         fprintf('%s', block);
 
         % Run the MNE command to extract the events
-        unix_command = sprintf('%s/bin/mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
-            state.mnehome,... %% explicit mnehome reference -tsg
+        unix_command = sprintf('%s $MNE_ROOT/bin/mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
+            state.setenv,... %% explicit mnehome reference -tsg
             gps_filename(subject, 'meg_scan_block', ['block=' block]),...
             gps_filename(subject, 'meg_events_block', ['block=' block]),...
             trigger_channel);
@@ -56,8 +57,8 @@ if(~isempty(strfind(operation, 'c')))
         if(strfind(output, 'No events to save'))
             trigger_channel = 'STI101';
 
-            unix_command = sprintf('%s/bin/mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
-                state.mnehome,... % explicit mnehome reference -tsg
+            unix_command = sprintf('%s $MNE_ROOT/bin/mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
+                state.setenv,... % explicit mnehome reference -tsg
                 gps_filename(subject, 'meg_scan_block', ['block=' block]),...
                 gps_filename(subject, 'meg_events_block', ['block=' block]),...
                 trigger_channel);

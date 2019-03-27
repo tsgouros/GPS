@@ -12,6 +12,7 @@ function varargout = gpsa_mne_inv(varargin)
 % 2013.04.24 - Changed subset/subsubset to condition hierarchy
 % 2013.04.30 - Updated folder names for new organization scheme
 % 2013.06.25 - Reverted status check to older version
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -60,8 +61,8 @@ if(~isempty(strfind(operation, 'c')))
         invfile = sprintf('%s-inv.fif', invfile);
         
         % Process unix command (Added explicit mnehome. -tsg)
-        unix_command = sprintf('%s/bin/mne_do_inverse_operator --inv %s --fwd %s --senscov %s --subject %s --noiserankold --loose 0.2%s',...
-            state.mnehome, invfile, subject.mne.fwdfile, subject.mne.covfile, subject.name, options);
+        unix_command = sprintf('%s $MNE_ROOT/bin/mne_do_inverse_operator --inv %s --fwd %s --senscov %s --subject %s --noiserankold --loose 0.2%s',...
+            state.setenv, invfile, subject.mne.fwdfile, subject.mne.covfile, subject.name, options);
         unix(unix_command);
     end
     

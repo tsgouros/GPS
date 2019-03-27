@@ -11,6 +11,7 @@ function varargout = gpsa_mne_avewaves(varargin)
 % 2013.04.24 - Changed subset/subsubset to condition hierarchy
 % 2013.04.29 - Changed file organization
 % 2013.06.13 - Changed the way time is organized
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -154,7 +155,8 @@ if(~isempty(strfind(operation, 'c')))
     fid = fopen(commandfile, 'w');
 
     %% Added an explicit reference to mnehome. -tsg
-    fprintf(fid, '%s/bin/mne_process_raw --lowpass 50 \\\n', state.mnehome); % 50 not 60 now
+    fprintf(fid, '%s $MNE_ROOT/bin/mne_process_raw --lowpass 50 \\\n', ...
+        state.setenv); % 50 not 60 now
     
     % For each block
     for i_block = 1:length(subject.blocks)

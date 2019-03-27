@@ -16,6 +16,7 @@ function varargout = gpsa_mne_stcave(varargin)
 % 2013.05.01 - Modified status check
 % 2013.06.20 - Reverted the status check to the individual system
 % 2013.07.10 - Uses condition brain instead of study.average_brain
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 

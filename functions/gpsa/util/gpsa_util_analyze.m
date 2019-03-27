@@ -34,8 +34,8 @@ if(~isempty(strfind(operation, 'c')))
     
     % Open up the analyzer program you do this in.
     %% (added explicit ref to mnehome -tsg)
-    unix_command = sprintf('%s/bin/mne_analyze --cd %s --subject %s &', ...
-                           state.mnehome, subject.meg.dir, subject.name);
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_analyze --cd %s --subject %s &', ...
+                           state.setenv, subject.meg.dir, subject.name);
     unix(unix_command);
     
     % Record the process

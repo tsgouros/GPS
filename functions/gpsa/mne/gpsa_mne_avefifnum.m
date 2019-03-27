@@ -5,6 +5,7 @@ function num = gpsa_mne_avefifnum(state)
 %
 % Changelog:
 % 2013.04.26 - Created in GPS1.8
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 
 subject = gpsa_parameter(state, state.subject);
