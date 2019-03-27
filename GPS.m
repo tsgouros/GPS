@@ -34,6 +34,9 @@ state.name = 'state';
 
 % Initialize the state structure
 state.dir = gps_presets('dir');
+state.datadir = strcat(state.dir, "/..");
+%% Should have something like the following to override the above.
+%% state.datadir = gps_presets('datadir');
 
 
 % We are going to cheat here by loading the necessary environment
