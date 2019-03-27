@@ -208,11 +208,11 @@ if(~isempty(strfind(operation, 'c')) || ~isempty(strfind(operation, 'o')))
             dataset.(roiset).Cmap = colortable.table(:,1:3)/255;
             laparci = zeros(dataset.N_L,1);
             
-            for i = 1:length(aparctable)
+            for i = 1:size(aparctable,1)
                 apr = aparctable(i, 5);
                 laparci(label == apr) = i;
             end
-            parcN_L = length(aparctable);
+            parcN_L = size(aparctable,1);
             
             % Right
             filename = sprintf('%s/label/rh.%s.annot', subject.mri.dir, roiset); %#ok<*NASGU>
@@ -222,7 +222,7 @@ if(~isempty(strfind(operation, 'c')) || ~isempty(strfind(operation, 'o')))
             dataset.(roiset).Cmap = cat(1, dataset.(roiset).Cmap, colortable.table(:,1:3)/255);
             raparci = zeros(dataset.N_R,1);
             
-            for i = 1:length(aparctable)
+            for i = 1:size(aparctable,1)
                 apr = aparctable(i,5);
                 raparci(label == apr) = i + parcN_L;
             end
