@@ -57,8 +57,8 @@ if(~isempty(strfind(operation, 'c')))
     end
     
     % Process unix command (added explicit mnehome reference. -tsg)
-    unix_command = sprintf('%s/bin/mne_make_movie --inv %s --stcin %s --smooth %d --morph %s  --surface inflated --stc %s --subject %s %s',...
-        state.mnehome, subject.mne.invfile, stcfilename_orig, smooth_level, condition.cortex.brain, stcfilename, subject.name, timespec);
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_make_movie --inv %s --stcin %s --smooth %d --morph %s  --surface inflated --stc %s --subject %s %s',...
+        state.setenv, subject.mne.invfile, stcfilename_orig, smooth_level, condition.cortex.brain, stcfilename, subject.name, timespec);
     unix(unix_command);
     gpsa_log(state, toc(tbegin), unix_command);
     
