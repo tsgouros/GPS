@@ -170,36 +170,53 @@ directories, or something, the
   is not that step, but is somehomw getting ready for it.  Invokes
   \verb+mne_setup_mri+.
 
-\dataflow{BE model}{}{} Boundary element model.  Find boundary to brain,
+\dataflow{BE model}{}{.surf files in MRI/subject/bem, and in
+  MRI/subject/bem/watershed} Boundary element model.  Find boundary to brain,
   differentiate with skull.  Invokes \verb+mri_watershed+
 
-\item BE model to fif -- Convert model to fif file, nothing more?
+\dataflow{BE model to fif}{}{fif files in MRI/subject/bem} -- Convert
+model to fif file, nothing more? 
+  Invokes \verb+mne_prepare_bem_model+.
 
-\item Average surface -- have to come back to this one once you have
+\dataflow{Average surface}{files in MRI/subject/surf/}%
+{output in MRI/study\_ave} -- have to come back to this one once you have
   all the subjects in the study completed to here.  Averages all of
-  them so you get one average subject.
+  them so you get one average subject.  Uses \verb+mris_make_template+,
+  \verb+mris_make_average_surface+, \verb+mris_inflate+,
+  \verb+mri_surf2surf+, \verb+mri_annotate+, \verb+mri_vol2vol+,
+  \verb+mris_volmask+, others. 
 
 \end{itemize}
 
 
 \begin{itemize}
 
-\item MEG raw data -- Import a raw fif file.  Copies it somewhere,
-  probably to the scans directory for each subject.  Time series for
-  each sensor on the scalp.
+\dataflow{Import}{raw fif files somewhere}{MEG/subject/scans}
+  The raw fif files contain a time series for each sensor on a
+  subject's scalp.  This button imports a collection of raw fif files
+  for a subject from somewhere specified via a GUI to a ``MEG''
+  directory for each subject.  Also sets up a bunch of other
+  directories: events, evoked, images, and scans\_filtered. 
 
-\item Extract event -- Locate the stimulus in time.  The events are
+\dataflow{Extract events}{MEG/subject/scans}{MEG/subject/events/*.eve} 
+Locate the stimulus in time.  The events are
   encoded inside the raw fif file.  Extracted and stored in a .eve
   file.  Each trigger has a number.
 
-\item Process events -- Adriana does not use.  Doesn't do anything?
-  Triggers an experiment-specific script, run when you press this
-  button.  Create the `grouped' files.
+\dataflow{Process events}{MEG/subject/events/*.eve}{MEG/subject/events/*grouped.eve}  DO NOT USE use.
+  This triggers an experiment-specific script to scan the .eve files
+  and pick up and group the events it finds in there.  Unfortunately,
+  the groupings are specific to the experiment, so attempts to create
+  a general solution have not succeeded.  Create your own groupings,
+  and put the files in this directory when you're done so the next
+  processes can be run.
 
-\item Bad channels -- MNE function looks at individual files,
-  interactive thing.  Before you do this, go to the `mne browse raw' step
-  to note which channels are bad, write them down, and note them
-  here.  Creates a text file with a list of bad channels.
+\dataflow{Bad channels}{text dialog}{MEG/subject/subject-bad-channels.txt}
+  This just accepts a list of bad channels from a user dialog box and records 
+  their numbers in a text file.  Before you do this, though, go to the `mne
+  browse raw' step   to note which channels are bad, write them down, and note
+  them here.  The channel numbers look like this: \verb+EEG1234+ and
+  \verb+MEG1234+. 
 
 \item EOG projections -- go back to utilities, use mne browse raw to
   find eye blink events, make a fif file describing them, and specify
@@ -213,18 +230,24 @@ directories, or something, the
 
 \end{itemize}
 
+
+MNE:
+
 \begin{itemize}
 
-\item Average waves -- Creates event-related responses.  Finds data
+\dataflow{Average waves}{MEG/subject/events/*grouped*}{MEG/subject/scans\_filtered, also look in
+  MNE/subject/blocks, and MNE/subject\_ave.fif,subject\_cov.fif} --
+Creates event-related responses.  Finds data 
   within the time window defined by each event.  Averaging across all
-  trials for each individual subject.  look in MNE/*.ave.fif, all kinds of other ave
-  files, descriptions, the script, and so on. commands, blocks, higher
-  level ave files, too.
+  trials for each individual subject.  look in MNE/*.ave.fif, all kinds of other
+  ave  files, descriptions, the script, and so on. commands, blocks, higher
+  level ave files, too.  This step requires you to have already specified the
+  event codes belonging to each condition, a step that must be done by hand.
 
-\item Forward solution -- Creates forward.fif file, look in
-  MNE/*.fwd.fif.  Requires co-registration step.
+\dataflow{Forward solution}{}{MNE/subject/subject-fwd.fif}  Requires
+co-registration step from the MEG menu.
 
-\item Inverse solution -- creates *.inv.fif files.
+\dataflow{Inverse solution}{}{MNE/subject/subject\_meg-inv.fif and MNE/subject/subject\_meg\_eeg-inv.fif} -- creates *.inv.fif files.
 
 \item Evoked trials -- saves in a .mat file, data around each event?
 
@@ -272,7 +295,24 @@ directories, or something, the
 \end{itemize}
 
 
+Utilities
 
+\begin{itemize}
+
+\item FS: TkMedit
+
+\item Visualize BEM
+
+\dataflow{mne\_browse\_raw}{}{fif file, by default goes in MEG/subject/scans}
+
+\dataflow{mne\_analyze}{raw fif, also inflated
+  brain}{MRI/subject/mri/T1-neuromag/sets} 
+
+\item GPS: ROIs
+
+\item GPS: Plot
+
+\end{itemize}
 
 
 
