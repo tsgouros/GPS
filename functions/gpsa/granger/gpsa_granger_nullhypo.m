@@ -92,7 +92,7 @@ if(~isempty(strfind(operation, 'c')))
     
     % Parallel Processing
     %N_parallel_processes = 8;
-    N_parallel_processes = 16;
+    N_parallel_processes = 2;
     %matlabpool(num2str(N_parallel_processes))
     parpool(N_parallel_processes);
     
