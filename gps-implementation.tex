@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 
 \usepackage{mathptmx}
-\usepackage[margin=1in]{geometry}
+\usepackage[hmargin=1.5in,tmargin=1in,bmargin=1.5in]{geometry}
 \usepackage{graphicx}
 \usepackage{multicol}
 \usepackage{url}
@@ -10,6 +10,9 @@
 \usepackage{eso-pic}
 \usepackage{picture} % explicit units in picture commands
 \usepackage{tikz}
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.8\baselineskip}
 
 \begin{document}
 
@@ -23,10 +26,13 @@
 
 \maketitle
 
-\section{A look at the data}
+\section{A look at the data flow}
 
 Roughly speaking, GPS is a processor for MEG data, with MRI data used
-to help place it in context within the brain.
+to help place it in context within the brain.  There is a manual for
+it and a cookbook, and both of those are good references for using
+it.  This document contains some implementation notes relevant to
+porting the software to a new computer system.
 
 
 \subsection{MRI}
@@ -66,36 +72,89 @@ MNE can be found in the \dir{MEG} and \dir{MNE} directories.
 
 \subsection{Data file and directory structure}
 
-A data directory will contain these five subdirectories: MRIraw, MRI,
-MEG, MNE, and Granger.
+The inputs and outputs for each step of the GPS process are contained
+in a directory tree that contains five subdirectories: MRIraw, MRI,
+MEG, MNE, and Granger.  The names are more or less indicative of what
+is in them, but fair warning: assume nothing.
 
+The GPS workflow is organized into four broad streams that appear as
+different screens in the GUI (click on the ``Analysis'' button that
+appears on the first GUI menu).
 
-\subsection{Data flow}
+\begin{description}
 
-The inputs to the whole system are:
+\item[MRI] Processing the raw MRI data, projecting it onto a standard
+  surface, building averages among the study participants.
 
-\newcommand{\dataflow}[3]{\item #1\par\textbf{Data In:~}#2\par%
-  \textbf{Data Out:~}#3\par}
+\item[MEG] Processing the measured MEG data, and lining it up with the
+  experimental ``events'' around which the study is arranged.
 
-MRI Processing
+\item[MNE] Developing the MRI and MEG data into vertices with
+  individual time series appropriate for putting together into regions
+  of interest.
+
+\item[Granger] Steps associated with the Granger causality analysis of
+  the regions of interest.
+
+\item[Utilities] There are several utility functions grouped under
+  this heading, including selecting time series, and creating the
+  regions of interest (ROIs).
+
+\end{description}
+
+The next sections will outline a rough account of the data flow among
+the various subdirectories of the study directory, organized more or
+less like the menu structure of the GPS/Analysis dialog.
+
+Note that some values are cached in MAT files whose location is
+specified when you initialize the system with \verb+gps_init.m+.  The
+default location for these files is in the home directory of the GPS
+software itself: \verb+GPS/parameters/<study name>+
+
+\newcommand{\dataflow}[3]{\item \framebox{#1}\par%
+  \textbf{Data In:~}\begin{minipage}{4.5in}\raggedright #2\end{minipage}\par%
+  \textbf{Data Out:~}\begin{minipage}{4.5in}\raggedright #3\end{minipage}\par}
+\renewcommand{\dir}[1]{\texttt{#1}}
+
+\newpage
+
+The basic data flow starts with a few ingredients:
+
+\renewcommand{\to}{\bgroup\ttfamily$>$\egroup}
+
+\begin{enumerate}
+
+\item MRI data, imported with \framebox{MRI \to Import}.  (That is the
+  \framebox{Import} button on the MRI dialog.)
+
+\item MEG data, imported with \framebox{MEG \to Import}.
+
+\item A way to group events.  This is the \framebox{MEG \to Process
+    Events} stage.  This option should not be used through the GUI.
+
+\end{enumerate}
+
+\subsubsection{MRI Processing}
 
 \begin{itemize}
 
 \dataflow{Import}{Data from outside GPS, maybe Martinos DBMS
   (Bourget), maybe somewhere else on a disk.}{Data
   is put into the MRIraw folder for that subject.}
-MRI data -- DICOM files. High resolution structural slices of a
-  head, instantaneous data.  Import is Martinos specific stuff where
-  it's getting the DICOM data from the Martinos DBMS (Bourget).
+Imports the raw MRI data (DICOM files). These are high resolution
+structural slices of a head, instantaneous data.  Import is Martinos
+specific stuff where it's getting the DICOM data from the Martinos
+DBMS (Bourget).
 
-\dataflow{Find T1-MPRAGE}{MRI data in MRIraw}{Modifications to MAT
-  files in GPS/Parameters, and a summary file and unpack.log in the MRIraw
-  directory} Finds from the DICOM file 
-the high-resolution structural MRIs
-  that we are interested in -- the T1 data.  We are not interested in the other
-  stuff, such functional imagery, initial localizers, DTI, etc.
+\dataflow{Find T1-MPRAGE}{MRI data from the \dir{MRIraw}}{Modifications to .mat
+  files in \dir{GPS/parameters}, and a summary file and unpack.log in
+  the \dir{MRIraw} directory} Finds the high-resolution structural MRIs
+  that we are interested in -- the T1 data --- from the DICOM file.
+  We are not interested in the other
+  stuff, such as functional imagery, initial localizers, DTI, etc.
 
-  note: This part of the procedure calls the \fs function
+
+  Note for Mac/OSX: This part of the procedure calls the \fs function
   \verb+unpacksdcmdir+, which has a timeout in it of 20 seconds.  A
   sample dataset run on my laptop easily takes more than that to
   process, even though it's all functioning just fine.  I hacked the
@@ -104,8 +163,8 @@ the high-resolution structural MRIs
 From within Matlab on my Mac (OS X 10.12), I get this error from \verb+mri_parse_sdcmdir+:
 
 \begin{verbatim}
-mri_parse_sdcmdir --sortbyrun --d GBU_2/MRIraw/GBU_12 
-                              --o GBU_2/MRIraw/GBU_12/dicomdir.sumfile 
+mri_parse_sdcmdir --sortbyrun --d GBU_2/MRIraw/GBU_12
+                              --o GBU_2/MRIraw/GBU_12/dicomdir.sumfile
                               --status GBU_2/MRIraw/GBU_12/parse.status
 
 
@@ -127,7 +186,7 @@ prevents environment variables associated with dynamic libraries
 protected processes.  To disable SIP, boot into the single user (hold
 down cmd-R during boot), bring up a terminal window, and do
 \verb+csrutil disable; reboot+.
-  
+
 
 \dataflow{Organize}{MRIraw}{MRI}
 This moves the raw data into place for further processing.  For each subject,
@@ -142,160 +201,198 @@ You will need a valid \fs license
 to proceed past this point.  Get it from
 \url{http://surfer.nmr.mgh.harvard.edu/registration.html}.
 
-\dataflow{Build surfaces}{Data in MRI/subject directories}{files in label,
-  mri/*.mgz, files in stats, surf, touch} Invokes the \fs 
+\dataflow{Build surfaces}{Data in MRI/(subject) directories}{files in label,
+  mri/*.mgz, files in \dir{stats}, \dir{surf}, \dir{touch}} Invokes the \fs
 \verb+recon-all+ command.  Also runs \verb+mri_em_register+,
 \verb+mri_ca_register+.  This is a long one, 4 hours on my laptop.
 
-\dataflow{FS average}{Data in MRI/surf, others}{surf/*h.sphere and
-  surf/*h.sphere.reg} -- copies an ``average'' subject from FS software. 
-  Seppo says Nothing to do with the actual data, but that does not
-  appear to be true.  Another input.  Runs
+\dataflow{FS average}{Data in \dir{MRI/surf}, others}{\dir{surf/*h.sphere} and
+  \dir{surf/*h.sphere.reg}} -- copies an ``average'' subject from FS software.
+%  Seppo says Nothing to do with the actual data, but that does not
+%  appear to be true.
+Another input.  Runs
   \verb+mris_sphere+, \verb+mris_register+, \verb+mris_make_surfaces+,
   \verb+mris_convert+, \verb+mri_volmask+,
   \verb+mris_anatomical_stats+, \verb+mri_aparc2aseg+,
   \verb+mri_binarize+, \verb+mri_segstats+,
   \verb+mri_label2label.bin+.  Also quite long.
 
-\dataflow{Source space}{}{MRI/subject/bem} Takes cortical surface that \fs
+\dataflow{Source space}{\dir{surf/*h.sphere} and
+  \dir{surf/*h.sphere.reg}}{\dir{MRI/(subject)/bem}} Takes cortical
+surface that \fs
   extracted, makes a grid of 3-4mm dipoles, models for the brain
   activity. Hypothesizing electrical sources at each dipole.  Still
   purely MRI processed data.  Create a tesselation of the surface and
   the nodes are the hypothesized dipoles.  Invokes
-  \verb+mne_setup_source_space+. 
+  \verb+mne_setup_source_space+.
 
-\dataflow{Setup coreg}{}{MRI/subject/mri/brain-neuromag} creates
-directories, or something, the 
+\dataflow{Setup coreg}{\dir{MRI/(subject)/bem/*src.fif}}{\dir{MRI/(subject)/mri/brain-neuromag}} Creates
+directories and prepares the ground.  The
   coregistration step is where the MRI and MEG data get combined. This
-  is not that step, but is somehomw getting ready for it.  Invokes
+  is not that step, but is somehow getting ready for it.  Invokes
   \verb+mne_setup_mri+.
 
-\dataflow{BE model}{}{.surf files in MRI/subject/bem, and in
-  MRI/subject/bem/watershed} Boundary element model.  Find boundary to brain,
-  differentiate with skull.  Invokes \verb+mri_watershed+
+\dataflow{BE model}{\dir{MRI/(subject)/mri/T1-neuromag/sets}}%
+{.surf files in \dir{MRI/(subject)/bem}, and in
+  \dir{MRI/(subject)/bem/watershed}} Boundary element model.  Find
+boundary to brain, differentiate with skull.  Invokes \verb+mri_watershed+
 
-\dataflow{BE model to fif}{}{fif files in MRI/subject/bem} -- Convert
-model to fif file, nothing more? 
+\dataflow{BE model to fif}{.surf files in \dir{MRI/(subject)/bem}, and in
+  \dir{MRI/(subject)/bem/watershed}}{*-bem.fif files in \dir{MRI/(subject)/bem}}
+Convert  model to fif file, maybe more.
   Invokes \verb+mne_prepare_bem_model+.
 
-\dataflow{Average surface}{files in MRI/subject/surf/}%
-{output in MRI/study\_ave} -- have to come back to this one once you have
-  all the subjects in the study completed to here.  Averages all of
-  them so you get one average subject.  Uses \verb+mris_make_template+,
+\dataflow{Brain2mat}{\dir{MRI/(subject)/surf},
+  \dir{MRI/(subject)/label/*.annot},
+  \dir{MNE/(subject)/*.fif}}{\dir{MRI/(subject)/brain.mat},
+  \dir{MRI/avg-subject/brain-fsaverage.mat}}  Mostly rearranging.
+Fills out several variables and stores them in .mat files.
+
+\dataflow{Average surface}{files in \dir{MRI/(subject)/surf/}}%
+{output in \dir{MRI/(study)\_ave}}  Process all the subjects in the
+study up to the Brain2Mat step before doing this one.  This step
+averages all of them so you get one average subject.  Uses
+\verb+mris_make_template+,
   \verb+mris_make_average_surface+, \verb+mris_inflate+,
   \verb+mri_surf2surf+, \verb+mri_annotate+, \verb+mri_vol2vol+,
-  \verb+mris_volmask+, others. 
+  \verb+mris_volmask+, others.
 
 \end{itemize}
 
+\subsubsection{MEG Preprocessing}
 
 \begin{itemize}
 
-\dataflow{Import}{raw fif files somewhere}{MEG/subject/scans}
+\dataflow{Import}{raw fif files somewhere}{\dir{MEG/(subject)/scans}}
   The raw fif files contain a time series for each sensor on a
   subject's scalp.  This button imports a collection of raw fif files
   for a subject from somewhere specified via a GUI to a ``MEG''
   directory for each subject.  Also sets up a bunch of other
-  directories: events, evoked, images, and scans\_filtered. 
+  directories: events, evoked, images, and scans\_filtered.
 
-\dataflow{Extract events}{MEG/subject/scans}{MEG/subject/events/*.eve} 
+\dataflow{Extract events}%
+{\dir{MEG/(subject)/scans}}{\dir{MEG/(subject)/events/*.eve}}
 Locate the stimulus in time.  The events are
   encoded inside the raw fif file.  Extracted and stored in a .eve
   file.  Each trigger has a number.
 
-\dataflow{Process events}{MEG/subject/events/*.eve}{MEG/subject/events/*grouped.eve}  DO NOT USE use.
+\dataflow{Process events}{\dir{MEG/(subject)/events/*.eve}}%
+{\dir{MEG/(subject)/events/*grouped.eve}}  DO NOT USE THIS.
   This triggers an experiment-specific script to scan the .eve files
   and pick up and group the events it finds in there.  Unfortunately,
   the groupings are specific to the experiment, so attempts to create
   a general solution have not succeeded.  Create your own groupings,
   and put the files in this directory when you're done so the next
-  processes can be run.
+  processes can be run.  The GPS Cookbook and manual have advice on
+  grouping.
 
-\dataflow{Bad channels}{text dialog}{MEG/subject/subject-bad-channels.txt}
-  This just accepts a list of bad channels from a user dialog box and records 
+\dataflow{Bad channels}{text dialog}{\dir{MEG/(subject)/(subject)-bad-channels.txt}}
+  This just accepts a list of bad channels from a user dialog box and records
   their numbers in a text file.  Before you do this, though, go to the `mne
-  browse raw' step   to note which channels are bad, write them down, and note
-  them here.  The channel numbers look like this: \verb+EEG1234+ and
-  \verb+MEG1234+. 
+  browse raw' step in the utilities menu to note which channels are
+  bad, write them down, and note them here.  The channel numbers look
+  like this: \verb+EEG1234+ and \verb+MEG1234+.
 
-\item EOG projections -- go back to utilities, use mne browse raw to
+\item EOG projections -- go back to utilities, use `mne browse raw' to
   find eye blink events, make a fif file describing them, and specify
   the location of that file here.  Look in scans, the word is
   ``projection''  see the file 'proj.fif'.
 
-\item Coregistration -- Go to utilities, use mne analyze, see
-  cookbook, mapping the meg data to mri data.  Creates a cor- fif
+\item Coregistration -- Go to utilities, use `mne analyze', see
+  Cookbook, mapping the meg data to mri data.  Creates a cor- fif
   file, maybe in the MRI directory.  This step just identifies the
   file location and name.
 
 \end{itemize}
 
-
-MNE:
+\subsubsection{MNE Analysis}
 
 \begin{itemize}
 
-\dataflow{Average waves}{MEG/subject/events/*grouped*}{MEG/subject/scans\_filtered, also look in
-  MNE/subject/blocks, and MNE/subject\_ave.fif,subject\_cov.fif} --
-Creates event-related responses.  Finds data 
+\dataflow{Average waves}{\dir{MEG/(subject)/events/*grouped*}}{\dir{MEG/(subject)/scans\_filtered}, also look in
+  \dir{MNE/(subject)/blocks}, and \dir{MNE/(subject)\_ave.fif},
+\dir{subject\_cov.fif}}
+Creates event-related responses.  Finds data
   within the time window defined by each event.  Averaging across all
-  trials for each individual subject.  look in MNE/*.ave.fif, all kinds of other
-  ave  files, descriptions, the script, and so on. commands, blocks, higher
+  trials for each individual subject.  look in \dir{MNE/*.ave.fif},
+  all kinds of other ave  files, descriptions, the script, and so
+  on. commands, blocks, higher
   level ave files, too.  This step requires you to have already specified the
   event codes belonging to each condition, a step that must be done by hand.
 
-\dataflow{Forward solution}{}{MNE/subject/subject-fwd.fif}  Requires
+\dataflow{Forward solution}{\dir{MRI/(subject)/bem/*-bem.fif}}%
+{\dir{MNE/(subject)/(subject)-fwd.fif}}  Requires
 co-registration step from the MEG menu.
 
-\dataflow{Inverse solution}{}{MNE/subject/subject\_meg-inv.fif and MNE/subject/subject\_meg\_eeg-inv.fif} -- creates *.inv.fif files.
+\dataflow{Inverse solution}{\dir{MNE/(subject)/(subject)-fwd.fif}}%
+{\dir{MNE/(subject)/(subject)\_meg-inv.fif}
+  and \dir{MNE/(subject)/(subject)\_meg\_eeg-inv.fif}} Creates *.inv.fif files.
 
-\item Evoked trials -- saves in a .mat file, data around each event?
+\dataflow{Evoked trials}{\dir{MEG/(subject)/scans\_filtered/*filtered\_raw.fif}}%
+{\dir{MEG/(subject)/evoked/*evoked\_filtered.mat}} Saves data
+around each event in a .mat file.
 
-\item Make .stc -- source time code, putting MRI and MEG toether.
+\dataflow{Make .stc}{\dir{MEG/(subject)/evoked/*evoked\_filtered.mat}}%
+{\dir{MNE/(subject)/stcs/*act-lh.stc} and \dir{*act-rh.stc}}
+Source time code, putting MRI and MEG together.
   Tesselation of \fs is very small triangles.  So we decimate
   the grid here and impute the time series for each source point.
-  Look in the stcs subdirectory.
+  Also generates some figures.
 
-\item Morphed stc -- transforming the individual data onto the
+\dataflow{Morphed
+  stc}{\dir{MNE/(subject)/stcs}}{\dir{MNE/(subject)/stcs/*avebrain-lh.stc}, etc}
+  Transforming the individual data onto the
   spherical surface, so they can be averaged in the next step.
 
-\item Average subject -- create the average subject from the
-  collection of individuals.  Who all must be complete before you get
-  here. Check out the average/stcs directory.
+\dataflow{Average subject}{\dir{MNE/(subject)/stcs/*avebrain-lh.stc}}%
+{\dir{MNE/(study)\_ave}} Create the average
+subject from the collection of individuals.  Who all must be complete
+before you get here.  That is, complete all individuals before
+clicking on this button once.
 
 \end{itemize}
 
+\subsubsection{Granger Analysis}
 
 \begin{itemize}
 
-\item Process ROIs --  Need to have the ROIs already by now.
-  This is in the Utilities collection of buttons.  Look in
-  Granger/*/rois directory.  These files are created by the GPS:ROIs
-  utility.  Output maybe some .mat files?  ROIs are specified for an
+\dataflow{Process ROIs}{\dir{Granger/(subject)/rois/(condition)/*.label},
+\dir{MNE/(subject)/(subject)-fwd.fif}}{\dir{Granger/rois/(condition)}, subdirectories}
+ The ROIs must already have been created for this step.
+These files are created by the GPS:ROIs
+  utility, in the `Utilities' dialog.  Look in
+  \dir{Granger/*/rois} directory.   ROIs are specified for an
   average brain.  The process step transforms locations to
   individuals, creates labels for the individual.
 
-\item MNI Coordinates -- For each ROI, finds coordinates in a
-  standardized brain.  Montreal Neuro Institute.
+\dataflow{MNI Coordinates}{\dir{Granger/(subject)/rois/(condition)/*.label}}%
+{\dir{Granger/rois/(study)\_ave/mni\_coordinates.txt}} For
+each ROI, finds coordinates in a
+  standardized brain.  % Montreal Neuro Institute.
 
-\item ROI Timecourses -- From the ROI, pick a representative vertex
+\dataflow{ROI Timecourses}{\dir{MNE/(subject)/(subject)\_meg\_eeg-inv.fif}, %
+\dir{Granger/rois/(condition)/(subject)/(subject)\_rois.mat}}%
+{\dir{Granger/roiwaves/(condition)/(subject)*.mat}}
+From the ROI,
+pick a representative vertex.  Outputs a mat file.
 
-\item see cookbook for Consolidate.
+\dataflow{Consolidate}{\dir{Granger/roiwaves/(condition)/(subject)*.mat}}%
+{\dir{Granger/input/(study)*.mat}} see cookbook
+for Consolidate.
 
-\item Compute Granger -- puts .mat files into the Granger/results/raw
-  directory.  Computes all Granger possibilities.
+\dataflow{Compute Granger}{\dir{Granger/input/(study)*.mat}}%
+{\dir{Granger/results/raw}} Computes all Granger
+possibilities.  These are the conditions that \emph{might} affect the output.
 
-\item Null hypothesis --
-
-
-
-
-\item information about experimental paradigm
+\dataflow{Null hypothesis}{\dir{Granger/results/raw}}%
+{\dir{Granger/results/*.mat},
+  \dir{Granger/results/nullhypothesis/*.mat}}  Cycles through the
+possibilities, recalculating the error terms for the N-1 set.
 
 \end{itemize}
 
 
-Utilities
+\subsubsection{Utilities}
 
 \begin{itemize}
 
@@ -303,62 +400,62 @@ Utilities
 
 \item Visualize BEM
 
-\dataflow{mne\_browse\_raw}{}{fif file, by default goes in MEG/subject/scans}
+\dataflow{mne\_browse\_raw}{}{fif file, by default goes in
+  \dir{MEG/(subject)/scans}}
 
 \dataflow{mne\_analyze}{raw fif, also inflated
-  brain}{MRI/subject/mri/T1-neuromag/sets} 
+  brain}{\dir{MRI/(subject)/mri/T1-neuromag/sets}}
 
-\item GPS: ROIs
+\dataflow{GPS: ROIs}{\dir{MNE/(subject)/stcs/*act-lh.stc}}%
+{\dir{Granger/rois/*.label}}
 
-\item GPS: Plot
+\item GPS: Plot -- Used for making visualizations of the results.
 
 \end{itemize}
 
 
 
-Under the ``MEG Preprocessing'' menu, it appears that data is imported
-from somewhere exterior to the \verb+<data>+ tree, and:
+% Under the ``MEG Preprocessing'' menu, it appears that data is imported
+% from somewhere exterior to the \verb+<data>+ tree, and:
 
-\begin{enumerate}
+% \begin{enumerate}
 
-\item The ``Import'' option
-stuffs it into \verb+meg_scan_dir+ which appears to default to
-\verb+<data>/MEG/<subject>/scans+.  Unfortunately the source file
-appears to be something like \verb+/space/megraid/*/MEG/*/subj_*+.
-Don't know how to fix that.
+% \item The ``Import'' option
+% stuffs it into \verb+meg_scan_dir+ which appears to default to
+% \verb+<data>/MEG/<subject>/scans+.  Unfortunately the source file
+% appears to be something like \verb+/space/megraid/*/MEG/*/subj_*+.
+% Don't know how to fix that.
 
-\item The ``Extract Events'' option seems to look for stuff in
-  \verb+<data>/MEG/<subject>/scans+ and put the output in
-  \verb+<data>/MEG/<subject>/events+
+% \item The ``Extract Events'' option seems to look for stuff in
+%   \verb+<data>/MEG/<subject>/scans+ and put the output in
+%   \verb+<data>/MEG/<subject>/events+
 
-\item There are lots of variants of the \verb+gpsa_meg_eveproc+
-  function.  Don't know what they're for.  The process events option
-  seems to want data files in
-  \verb+<data>/MEG/<subject>/events/*_*.eve+  This is the
-  \verb+meg_events_block+ option of \verb+gps_filename.m+.  The output
-  seems to be steered back to the same directory, with files called
-  \verb+*_grouped.eve+ which is the \verb+meg_events_grouped_gen+
-  option of \verb+gps_filename.m+.
+% \item There are lots of variants of the \verb+gpsa_meg_eveproc+
+%   function.  Don't know what they're for.  The process events option
+%   seems to want data files in
+%   \verb+<data>/MEG/<subject>/events/*_*.eve+  This is the
+%   \verb+meg_events_block+ option of \verb+gps_filename.m+.  The output
+%   seems to be steered back to the same directory, with files called
+%   \verb+*_grouped.eve+ which is the \verb+meg_events_grouped_gen+
+%   option of \verb+gps_filename.m+.
 
-\item
+% \item
 
-\end{enumerate}
+% \end{enumerate}
 
 \section{Looking at the code}
 
 The analysis functions all seem to operate with two parameters, the
-state and a flag, a `t', a `c', or a `p'.  I can't find anywhere in
-the comments what these stand for, but they seem like `p' for
+state and a flag, a `t', a `c', or a `p'. These appear to stand for  `p' for
 `progress', `c' for `compute', and `t' for, well I don't know,
-`type'?  The \verb+gpsa_do()+ function calls the `t' version, and that
+`test'?  The \verb+gpsa_do()+ function calls the `t' version, and that
 tells it something about whether the result is subject specific or
-condition specific.  Then it calls the same function with a `p',
-presumably to see whether it needs to be computed at all, and if so,
+condition specific.  Then it calls the same function with a `p', to
+see whether it needs to be computed at all, and if so,
 it calls the same function yet one more time with a `c'.
 
 This allows each function to set its own conditions on whether it runs
-or not, which seems like a good thing, but I wish I knew better what
-the conditions were.
+or not, which is important with such a heterogeneous set of functions.
 
 
 
