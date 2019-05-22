@@ -374,11 +374,13 @@ each ROI, finds coordinates in a
 \dir{Granger/rois/(condition)/(subject)/(subject)\_rois.mat}}%
 {\dir{Granger/roiwaves/(condition)/(subject)*.mat}}
 From the ROI,
-pick a representative vertex.  Outputs a mat file.
+pick a representative vertex.  Outputs a mat file containing a
+description and the time series for each identified ROI.
 
 \dataflow{Consolidate}{\dir{Granger/roiwaves/(condition)/(subject)*.mat}}%
-{\dir{Granger/input/(study)*.mat}} see cookbook
-for Consolidate.
+{\dir{Granger/input/(study)*.mat}} The output here is a .mat file that
+contains a time series for each ROI and each subject, along with
+descriptions of the ROIs and the subjects.
 
 \dataflow{Compute Granger}{\dir{Granger/input/(study)*.mat}}%
 {\dir{Granger/results/raw}} Computes all Granger
