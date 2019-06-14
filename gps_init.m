@@ -15,17 +15,17 @@ function gps_init()
 % analyses of those data.
 %
 % Copyright (C) 2014  Alexander Conrad Nied and David Gow
-% 
+%
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
 % the Free Software Foundation, either version 3 of the License, or
 % (at your option) any later version.
-% 
+%
 % This program is distributed in the hope that it will be useful,
 % but WITHOUT ANY WARRANTY; without even the implied warranty of
 % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % GNU General Public License for more details.
-% 
+%
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -90,7 +90,7 @@ fprintf(fid, '        preset = ''SampleStudy'';\n');
 fprintf(fid, '    case {''stages''}\n');
 fprintf(fid, '        preset = {''util'', ''mri'', ''meg'', ''mne'', ''granger''};\n');
 fprintf(fid, '        %%preset = {''util'', ''mri'', ''meg'', ''mne'', ''plv'', ''granger''};\n');
-fprintf(fid, '    case {''stage names''}\n');
+fprintf(fid, '    case {''stagenames''}\n');
 fprintf(fid, '        preset = {''Utilities'', ''MRI'', ''MEG'', ''MNE'', ''Granger''};\n');
 fprintf(fid, '        %%preset = {''Utilities'', ''MRI'', ''MEG'', ''MNE'', ''PLV'', ''Granger''};\n');
 fprintf(fid, 'end %% switch\n');
