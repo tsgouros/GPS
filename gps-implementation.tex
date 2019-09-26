@@ -356,14 +356,19 @@ clicking on this button once.
 
 \begin{itemize}
 
-\dataflow{Process ROIs}{\dir{Granger/(subject)/rois/(condition)/*.label},
-\dir{MNE/(subject)/(subject)-fwd.fif}}{\dir{Granger/rois/(condition)}, subdirectories}
- The ROIs must already have been created for this step.
-These files are created by the GPS:ROIs
+\dataflow{Process ROIs}{\dir{Granger/(study)/rois/(condition)/(AVERAGEsubject)/*.label},
+\dir{MNE/(subject)/(subject)-fwd.fif}, \dir{MRI/(subject)/*.annot}}%
+{\dir{Granger/rois/(condition)}, subdirectories, %
+\dir{Granger/rois/(condition)/(subject)/(subject)\_rois.mat},
+\dir{Granger/(study)/rois/(condition)/(subject)/*.label},}
+ The ROIs for the average brain must already have been created for
+ this step.  The first step here is to generate the ROIs for the
+ individual brains \emph{from} the average brain, using
+ \texttt{mne\_morph\_labels}. 
+The label files for the average brain are created by the GPS:ROIs
   utility, in the `Utilities' dialog.  Look in
-  \dir{Granger/*/rois} directory.   ROIs are specified for an
-  average brain.  The process step transforms locations to
-  individuals, creates labels for the individual.
+  \dir{Granger/*/rois} directory.  This step uses those ROIs to select
+  comparable ROIs in the individual brains.
 
 \dataflow{MNI Coordinates}{\dir{Granger/(subject)/rois/(condition)/*.label}}%
 {\dir{Granger/rois/(study)\_ave/mni\_coordinates.txt}} For
@@ -409,7 +414,7 @@ possibilities, recalculating the error terms for the N-1 set.
   brain}{\dir{MRI/(subject)/mri/T1-neuromag/sets}}
 
 \dataflow{GPS: ROIs}{\dir{MNE/(subject)/stcs/*act-lh.stc}}%
-{\dir{Granger/rois/*.label}}
+{\dir{Granger/rois/(AVERAGEsubject)/*.label}}
 
 \item GPS: Plot -- Used for making visualizations of the results.
 
