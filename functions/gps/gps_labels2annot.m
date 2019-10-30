@@ -105,7 +105,10 @@ i_label_r = 0;
 
 for i_label = 1:length(labels)
     area = labels_area{i_label};
-    i_lookup = find(strcmp(area, colortable_original.textdata(4:end, 2)));
+    %i_lookup = find(strcmp(area, colortable_original.textdata(4:end, 2)));
+    i_lookup = find(strcmp(area, colortable_original.textdata(3:end, 2)));   
+    %%%%%%%%% Changed "4"->"3" SA 2019-05-23
+    
     color = colortable_original.data(i_lookup, :); %#ok<FNDSB>
     
     % Get the color and modulate its chroma and luna if it isn't the first
