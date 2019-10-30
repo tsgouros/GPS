@@ -26,6 +26,7 @@ function preset = gps_presets(name)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+currentFolder=pwd;
 switch lower(name)
     case {'gpsnum', 'gpsfig', 'menu figure'}
         preset = 6750000;
@@ -38,19 +39,25 @@ switch lower(name)
     case {'gpspnum', 'gpspfig', 'plotting figure'}
         preset = 6757000;
     case {'dir', 'directory'}
-        preset = '/Users/tomfool/tech/19/gow/GPS';
+        preset = currentFolder;
         % preset = '/autofs/cluster/dgow/GPS1.9/GPS';
     case {'functions', 'functiondir', 'fdir'}
-        preset = '/Users/tomfool/tech/19/gow/GPS/functions';
+        preset = [currentFolder, '/functions'];
         % preset = '/autofs/cluster/dgow/GPS1.9/GPS/functions';
     case {'parameters', 'parameterdir', 'pdir'}
-        preset = '/Users/tomfool/tech/19/gow/GPS/parameters';
+        preset = [currentFolder, '/parameters'];
         % preset = '/autofs/cluster/dgow/GPS1.9/GPS/parameters';
     case {'images', 'imagedir', 'idir'}
-        preset = '/Users/tomfool/tech/19/gow/GPS/images';
+        preset = [currentFolder, '/images'];
+        if (~exist(preset))
+            mkdir(preset);
+        end
         % preset = '/autofs/cluster/dgow/GPS1.9/GPS/images';
     case {'logs', 'logdir', 'ldir'}
-        preset = '/Users/tomfool/tech/19/gow/GPS/logs';
+        preset = [currentFolder, '/logs'];
+        if (~exist(preset))
+            mkdir(preset);
+        end
         % preset = '/autofs/cluster/dgow/GPS1.9/GPS/logs';
     case {'study'}
         preset = 'SampleStudy';
