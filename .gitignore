@@ -16,3 +16,8 @@ WPM
 
 # WE SHOULD NOT BE COMMITTING .mat FILES TO SOURCE CODE CONTROL
 *.mat
+
+# Or these generated files
+gps_presets.m
+gps_dir.m
+pathdef.m
