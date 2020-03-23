@@ -16,3 +16,7 @@ WPM
 
 # WE SHOULD NOT BE COMMITTING .mat FILES TO SOURCE CODE CONTROL
 *.mat
+
+# Auto-generated files that should not be under source control either
+gps_presets.m
+functions/gps/gps_dir.m
