@@ -165,7 +165,7 @@ fprintf(fid, 'export FSFAST_HOME=%s\n', exfolders{2});
 fprintf(fid, 'export MNI_DIR=%s\n', exfolders{3});
 fprintf(fid, 'export MNE_ROOT=%s\n', exfolders{4});
 fprintf(fid, 'export MATLAB_ROOT=%s\n', exfolders{5});
-fprintf(fid, 'export SUBJECTS_DIR=%s\n', exfolders{6});
+fprintf(fid, 'export STUDY_DIR=%s\n', exfolders{6});
 fclose(fid);
 
 if ~exist(exfolders{6}, 'dir')
