@@ -81,6 +81,8 @@ fprintf(fid, '    case {''functions'', ''functiondir'', ''fdir''}\n');
 fprintf(fid, '        preset = ''%s/functions'';\n', folders{1});
 fprintf(fid, '    case {''parameters'', ''parameterdir'', ''pdir''}\n');
 fprintf(fid, '        preset = ''%s'';\n', folders{2});
+fprintf(fid, '    case {''studyparameters''}\n');
+fprintf(fid, '        preset = ''$STUDY_DIR/parameters'';\n');
 fprintf(fid, '    case {''images'', ''imagedir'', ''idir''}\n');
 fprintf(fid, '        preset = ''%s'';\n', folders{3});
 fprintf(fid, '    case {''logs'', ''logdir'', ''ldir''}\n');
