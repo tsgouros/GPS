@@ -34,7 +34,8 @@ state.name = 'state';
 
 % Initialize the state structure
 state.dir = gps_presets('dir');
-state.datadir = strcat(state.dir, "/..");
+state.datadir = '$STUDY_DIR';
+setenv("STUDY_DIR", gps_data_dir());
 %% Should have something like the following to override the above.
 %% state.datadir = gps_presets('datadir');
 
@@ -42,7 +43,12 @@ state.datadir = strcat(state.dir, "/..");
 % We are going to cheat here by loading the necessary environment
 % variables for Freesurfer and MNE each time those programs are 
 % invoked, instead of relying on the inherited environment.
-state.setenv = sprintf("source %s/gps_init.bash; ", state.dir);
+shell = strsplit(getenv(SHELL), "/");
+if ((shell(end) == "bash") || (shell(end) == "sh"))
+  state.setenv = sprintf("source %s/gps_init.bash; ", state.dir);
+else if ((shell(end) == "tcsh") || (shell(end) == "csh"))
+  state.setenv = sprintf("source %s/gps_init.csh; ", state.dir);
+end
 
 % Get the position of the monitor
 state.gui.position.screen = get(0, 'ScreenSize');
