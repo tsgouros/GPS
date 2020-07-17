@@ -43,7 +43,7 @@ setenv("STUDY_DIR", gps_data_dir());
 % We are going to cheat here by loading the necessary environment
 % variables for Freesurfer and MNE each time those programs are 
 % invoked, instead of relying on the inherited environment.
-shell = strsplit(getenv(SHELL), "/");
+shell = strsplit(getenv('SHELL'), "/");
 if ((shell(end) == "bash") || (shell(end) == "sh"))
   state.setenv = sprintf("source %s/gps_init.bash; ", state.dir);
 else if ((shell(end) == "tcsh") || (shell(end) == "csh"))

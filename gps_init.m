@@ -203,7 +203,7 @@ end
 
 % Change the data directory pointing program
 fid = fopen([gpsdir, '/gps_data_dir.m'], 'w');
-fprintf(fid, 'function datadir = %s\n', exfolders{6});
+fprintf(fid, 'function direc = gps_data_dir()\n');
 fprintf(fid, '%% Returns just the data directory\n');
 fprintf(fid, '%% Generated file -- DO NOT EDIT.\n');
 fprintf(fid, '\ndirec = ''%s/'';', exfolders{6});
