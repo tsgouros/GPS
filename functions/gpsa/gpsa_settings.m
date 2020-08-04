@@ -49,7 +49,7 @@ settings_state.gui.study_title = uicontrol(settings_state.gui.fig,...
     'Style', 'Text', 'String', sprintf('%s''s Studies', user));
 
 % Get the list of studies
-files = dir(gps_presets('parameters'));
+files = dir(gps_presets('studyparameters'));
 studies = {files.name};
 studies = setdiff(studies, {'.', '..', 'GPS'});
 
@@ -60,7 +60,7 @@ settings_state.gui.study_list = uicontrol(settings_state.gui.fig,...
     'Style', 'Listbox', 'String', studies, 'Max', length(studies));
 
 % Try to load the list of studies specified for this user
-userstudies_filename = sprintf('%s/GPS/userstudies.mat', gps_presets('parameters'));
+userstudies_filename = sprintf('%s/GPS/userstudies.mat', gps_presets('studyparameters'));
 
 if(exist(userstudies_filename, 'file'))
     userstudies = load(userstudies_filename);

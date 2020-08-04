@@ -97,7 +97,7 @@ if(~isempty(strfind(operation, 'c')))
     parpool(N_parallel_processes);
     
     % Make a progress marking directory
-    prog_dir = sprintf('%s/GPS/tmp_%s', gps_presets('parameters'), datestr(now, 'yyyymmdd_hhMMss'));
+    prog_dir = sprintf('%s/GPS/tmp_%s', gps_presets('studyparameters'), datestr(now, 'yyyymmdd_hhMMss'));
     mkdir(prog_dir);
 
     try

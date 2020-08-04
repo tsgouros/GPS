@@ -16,7 +16,7 @@ state.study = state.studies{i_study};
 %% Load file list
 
 % Get the list of folders from the parameters folder
-files = sprintf('%s/%s/*.mat', gps_presets('parameters'), state.study);
+files = sprintf('%s/%s/*.mat', gps_presets('studyparameters'), state.study);
 files = dir(files);
 
 % Presume each name of a folder is a different study (should be)

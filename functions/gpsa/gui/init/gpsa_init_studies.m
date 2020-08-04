@@ -17,7 +17,7 @@ state = gpsa_get('state');
 %% Load study list
 
 % Get the list of folders from the parameters folder
-files = dir(gps_presets('parameters'));
+files = dir(gps_presets('studyparameters'));
 
 % Presume each name of a folder is a different study (should be)
 state.studies = {files.name};
@@ -31,7 +31,7 @@ end
 
 % Try to load the list of studies specified for this user
 user = getenv('USER');
-userstudies_filename = sprintf('%s/GPS/userstudies.mat', gps_presets('parameters'));
+userstudies_filename = sprintf('%s/GPS/userstudies.mat', gps_presets('studyparameters'));
 
 if(exist(userstudies_filename, 'file'))
     userstudies = load(userstudies_filename);
