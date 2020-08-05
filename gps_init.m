@@ -187,6 +187,15 @@ fprintf(fid, '    case {''stagenames''}\n');
 fprintf(fid, '        preset = {''Utilities'', ''MRI'', ''MEG'', ''MNE'', ''Granger''};\n');
 fprintf(fid, '        %%preset = {''Utilities'', ''MRI'', ''MEG'', ''MNE'', ''PLV'', ''Granger''};\n');
 fprintf(fid, 'end %% switch\n');
+fprintf(fid, 'if (isstring(preset))\n');
+fprintf(fid, '    if (preset(1) == "/")  \n');
+fprintf(fid, '       [status, msg, msgID] = mkdir(preset);\n');
+fprintf(fid, '       if (status ~= 1)\n');
+fprintf(fid, '           preset = '''';\n');
+fprintf(fid, '           disp([msg, '': '', msgID])\n');
+fprintf(fid, '       end \n');
+fprintf(fid, '    end \n');
+fprintf(fid, 'end \n');
 fprintf(fid, '\nend %% function\n');
 fclose(fid);
 
