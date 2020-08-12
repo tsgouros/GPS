@@ -68,7 +68,7 @@ if exist([folders{1}, '/functions']) == 7
 else
     error("functions dir does not exist. Are you sure about GPS location?");
 end
-    
+
 %% Now we are going to create a little shell script that is run before the
 %% Matlab GPS functions execute any shell command, to enforce uniformity of
 %% environment, and allow functions to reference environment variables.
@@ -147,7 +147,7 @@ fprintf(fid, 'function preset = gps_presets(name)\n');
 fprintf(fid, '%% Returns preset variables.\n');
 fprintf(fid, '%s\n', citation);
 fprintf(fid, '%% Acquire the necessary environment variables.\n');
-fprintf(fid, 'gps_envvars();\n');
+fprintf(fid, 'gps_envvars;\n');
 fprintf(fid, 'switch lower(name)\n');
 fprintf(fid, '    case {''gpsnum'', ''gpsfig'', ''menu figure''}\n');
 fprintf(fid, '        preset = 6750000;\n');
