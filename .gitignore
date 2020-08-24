@@ -33,3 +33,7 @@ log/*
 images/*
 
 
+# LaTeX stuff
+*.aux
+*.toc
+*.out

@@ -10,6 +10,7 @@
 \usepackage{eso-pic}
 \usepackage{picture} % explicit units in picture commands
 \usepackage{tikz}
+\usepackage{hyperref}
 
 \setlength{\parindent}{0cm}
 \setlength{\parskip}{0.8\baselineskip}
@@ -25,6 +26,12 @@
 \newcommand{\fs}{Freesurfer\xspace}
 
 \maketitle
+
+\begin{center}
+\begin{minipage}{0.8\columnwidth}\setlength{\baselineskip}{0.85\baselineskip}
+\tableofcontents
+\end{minipage}
+\end{center}
 
 \section{A look at the data flow}
 
@@ -116,7 +123,7 @@ software itself: \verb+GPS/parameters/<study name>+
   \textbf{Data Out:~}\begin{minipage}{4.5in}\raggedright #3\end{minipage}\par}
 \renewcommand{\dir}[1]{\texttt{#1}}
 
-\newpage
+
 
 The basic data flow starts with a few ingredients:
 
@@ -268,7 +275,15 @@ averages all of them so you get one average subject.  Uses
   subject's scalp.  This button imports a collection of raw fif files
   for a subject from somewhere specified via a GUI to a ``MEG''
   directory for each subject.  Also sets up a bunch of other
-  directories: events, evoked, images, and scans\_filtered.
+  directories: \dir{events}, \dir{evoked}, \dir{images}, and
+  \dir{scans\_filtered}.
+
+  Note that the input data files use a very strict naming convention that looks like  \verb+<+\emph{subject}\verb+>_<+\emph{block}\verb+>_raw.fif+
+  where \emph{subject} and \emph{block} are names like ``UAG08'' and
+  ``b1''.  The ``blocks'' are essentially sessions of MEG data
+  gathering.  If your experiment did not use blocks, you still have to
+  assign a block name to each data file, so use ``B1'' or something
+  like that.  Example: \verb+UAG08_B1_raw.fif+.
 
 \dataflow{Extract events}%
 {\dir{MEG/(subject)/scans}}{\dir{MEG/(subject)/events/*.eve}}
@@ -364,7 +379,7 @@ clicking on this button once.
  The ROIs for the average brain must already have been created for
  this step.  The first step here is to generate the ROIs for the
  individual brains \emph{from} the average brain, using
- \texttt{mne\_morph\_labels}. 
+ \texttt{mne\_morph\_labels}.
 The label files for the average brain are created by the GPS:ROIs
   utility, in the `Utilities' dialog.  Look in
   \dir{Granger/*/rois} directory.  This step uses those ROIs to select
