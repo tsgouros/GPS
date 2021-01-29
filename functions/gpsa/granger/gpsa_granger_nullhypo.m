@@ -92,7 +92,7 @@ if(~isempty(strfind(operation, 'c')))
     
     % Parallel Processing
     %N_parallel_processes = 8;
-    N_parallel_processes = 2;
+    N_parallel_processes = 16; %clive has 16 cores to processs 10/26/2020 ON
     %matlabpool(num2str(N_parallel_processes))
     parpool(N_parallel_processes);
     

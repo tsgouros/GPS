@@ -57,6 +57,7 @@ if(~isempty(strfind(operation, 'c')))
             % If this is the first subject, allocate the matrices
             if(i_subject == 1 || ~exist('sample_times', 'var'))
                 start = min(0, timestart);
+                %start = timestart - 100; %10/29/20 ON wanted to have a shorter time start above zero. 
                 stop = min(roidata.sample_times(end)*1000, timestop + 100);
                 sample_times = (start:stop) / 1000;
                 N_samples = length(sample_times);
