@@ -33,8 +33,9 @@ if(~isempty(strfind(operation, 'c')))
     state.function = 'gpsa_util_tkmedit';
     tbegin = tic;
     
-    %% Open tkmedit
-    unix_command = sprintf('tkmedit %s T1.mgz &', subject.name);
+    %% Open tkmedit (with explicit reference to fshome. -tsg)
+    unix_command = sprintf('%s/bin/tkmedit %s T1.mgz &', ...
+                           state.fshome, subject.name);
     unix(unix_command);
     
     % Record the process

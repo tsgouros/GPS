@@ -1,0 +1,8 @@
+Functions written by Fa-Hsuan Lin, 1999-2004.
+
+ Jun 15  2015 fmri_scale.m
+ Jun 15  2015 inverse_read_curv.m
+ Jun 15  2015 inverse_read_curv_new.m
+ Jun 15  2015 inverse_smooth.m
+ Jun 15  2015 inverse_write_stc.m
+

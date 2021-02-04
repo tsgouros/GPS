@@ -210,7 +210,10 @@ if(~isempty(strfind(operation, 'c')))
         % Draw mean activity
         drawdata.act.data = mean(cortexdata(:, sample(condition.event.focusstart / 1000) : ...
             sample(condition.event.focusstop / 1000)), 2);
-        gps_brain_draw(drawdata, options);
+        %%%%%%%%%%%%%%% Commented out by SA 2015-06-16, because crashed
+        %%%%%%%%%%%%%%% with error: java.lang.IllegalArgumentException:
+        %%%%%%%%%%%%%%% adding a container to a container on a different GraphicsDevice 
+        %gps_brain_draw(drawdata, options);
         
         frame = getframe(gcf);
         filename = sprintf('%s/%s_%s_act_cortex.png', mneimdir, subject.name, condition.name);

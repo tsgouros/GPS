@@ -1,4 +1,4 @@
-function GPSa
+function GPSa(source, event, state)
 % Opens a GUI to use GPS analysis functions
 %
 % Author: A. Conrad Nied
@@ -7,22 +7,8 @@ function GPSa
 % 2012.09.17 - Created
 % 2012.10.05 - Removed excess '/' from state.dir
 % 2013.04.05 - Works as a subsidary of GPS now, updated for GPS1.8
-
-%% Setup GUI parameters
-
-% Initialize the state structure
-state.name = 'state';
-
-% Initialize the state structure
-state.dir = gps_presets('dir');
-
-% Get the position of the monitor
-state.gui.position.screen = get(0, 'ScreenSize');
-
-% Start the figure
-state.gui.fig = gps_presets('gpsafig');
-figure(state.gui.fig)
-
+% 2019.02.14 - Changed to get state from GPS above.  -ts
+  
 % Save the state
 gpsa_set(state);
 

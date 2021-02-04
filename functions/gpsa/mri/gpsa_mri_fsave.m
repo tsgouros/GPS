@@ -12,6 +12,7 @@ function varargout = gpsa_mri_fsave(varargin)
 % 2013.04.11 - GPS 1.8, Updated the status check to the new system
 % 2013.04.24 - Changed subset/subsubset to condition/subset
 % 2013.07.02 - Reverted status check to function specific
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -34,9 +35,9 @@ if(~isempty(strfind(operation, 'c')))
     tbegin = tic;
     
     %% Do the third freesurfer auto-recon
-    
-    unix_command = sprintf('recon-all -autorecon3 -s %s',...
-        subject.name);
+       %% Added explicit ref to fshome.   -tsg
+    unix_command = sprintf('%s $FREESURFER_HOME/bin/recon-all -autorecon3 -s %s',...
+        state.setenv, subject.name);
     unix(unix_command);
     
     % Record the process

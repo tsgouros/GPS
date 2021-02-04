@@ -14,6 +14,7 @@ function varargout = gpsa_mne_avesubj(varargin)
 % 2013.05.01 - Corrected error in gps_filename evocation
 % 2013.06.20 - Reverted the status check to the individual system and
 % creates MNE/ave directory now
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -52,7 +53,8 @@ if(~isempty(strfind(operation, 'c')))
     if(~exist(folder, 'dir')); mkdir(folder); end
     fprintf(desc_file,'\ndeststc %s\n',...
         gps_filename(study, condition, 'mne_stc_avesubj'));
-    unix_command = sprintf('mne_average_estimates --desc %s', desc_filename);
+    %% Added explicit mnehome reference.  -tsg
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_average_estimates --desc %s', state.setenv, desc_filename);
     unix(unix_command);
     
     % Record the process

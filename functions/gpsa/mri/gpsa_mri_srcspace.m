@@ -12,6 +12,7 @@ function varargout = gpsa_mri_srcspace(varargin)
 % 2013.04.11 - GPS 1.8, Updated the status check to the new system
 % 2013.04.24 - Changed subset/subsubset to condition/subset
 % 2013.07.02 - Reverted status check to function specific
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -42,14 +43,14 @@ if(~isempty(strfind(operation, 'c')))
         overstring = '';
     end
     
-    % Run the unix command
+    % Run the unix command (with explicit reference to mnehome.  -tsg)
     if(isfield(state, 'plvflag') && state.plvflag)
-        unix_command = sprintf('mne_setup_source_space%s --spacing 5 --subject %s',...
-            overstring, subject.name);
+        unix_command = sprintf('%s $MNE_ROOT/bin/mne_setup_source_space%s --spacing 5 --subject %s',...
+            state.setenv, overstring, subject.name);
         subject.mri.ico = 5;
     else
-        unix_command = sprintf('mne_setup_source_space%s --subject %s',...
-            overstring, subject.name);
+        unix_command = sprintf('%s $MNE_ROOT/bin/mne_setup_source_space%s --subject %s',...
+            state.setenv, overstring, subject.name);
         subject.mri.ico = 7;
     end
     

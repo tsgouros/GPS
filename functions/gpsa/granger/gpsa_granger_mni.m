@@ -103,6 +103,10 @@ if(~isempty(strfind(operation, 'c')))
     % Write to file
     filename = gps_filename(state, study, condition, 'granger_mni_coordinates');
     fid = fopen(filename, 'w');
+    
+    filename
+    fid
+    
     fprintf(fid, str);
     fclose(fid);
     

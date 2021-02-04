@@ -12,6 +12,7 @@ function varargout = gpsa_meg_eveext(varargin)
 % 2013.04.24 - Changed subset/subsubset to condition hierarchy
 % 2013.04.30 - Gets filenames from gps_filename.m
 % 2013.06.25 - Reverted status check to older version
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -28,46 +29,48 @@ end
 
 % If it is proper to do the function
 if(~isempty(strfind(operation, 'c')))
-    
+
     subject = gpsa_parameter(state.subject);
     state.function = 'gpsa_meg_eveext';
     tbegin = tic;
-    
+
     % Functional instructions
     fprintf('%s: Extracting events for %s\n\t', state.function, subject.name);
-    
+
     trigger_channel = 'STI_014';
-    
+
     % For Each Block
     for i_block = 1:length(subject.blocks)
         block = subject.blocks{i_block};
         fprintf('%s', block);
-        
+
         % Run the MNE command to extract the events
-        unix_command = sprintf('mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
+        unix_command = sprintf('%s $MNE_ROOT/bin/mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
+            state.setenv,... %% explicit mnehome reference -tsg
             gps_filename(subject, 'meg_scan_block', ['block=' block]),...
             gps_filename(subject, 'meg_events_block', ['block=' block]),...
             trigger_channel);
         [~, output] = unix(unix_command);
         fprintf(output)
-        
+
         % Try a different trigger channel if the first one didn't work
         if(strfind(output, 'No events to save'))
             trigger_channel = 'STI101';
-            
-            unix_command = sprintf('mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
+
+            unix_command = sprintf('%s $MNE_ROOT/bin/mne_process_raw --raw %s --allevents --eventsout %s --projon --digtrig %s',...
+                state.setenv,... % explicit mnehome reference -tsg
                 gps_filename(subject, 'meg_scan_block', ['block=' block]),...
                 gps_filename(subject, 'meg_events_block', ['block=' block]),...
                 trigger_channel);
             [~, output] = unix(unix_command);
             fprintf(output)
         end
-        
+
         % If we still didn't find events, throw an error
         if(strfind(output, 'No events to save'))
             error('%s %s: No events to save', subject.name, block);
         end
-        
+
         fprintf('.');
     end % For Each Block
 
@@ -75,7 +78,7 @@ if(~isempty(strfind(operation, 'c')))
 
     % Record the process
     gpsa_log(state, toc(tbegin));
-    
+
 end % If we should do the function
 
 %% Add to the report concerning the progress
@@ -89,7 +92,7 @@ end
 
 %% Prepare the report and output
 
-if(nargout == 1 && exist('report', 'var')); 
+if(nargout == 1 && exist('report', 'var'));
     varargout{1} = report;
 end
 

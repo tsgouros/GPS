@@ -197,13 +197,13 @@ if(~isempty(strfind(operation, 'c')))
                 selected_roinames = cat(1, selected_roinames, name);
             end
         end
-        plot(sample_times, squeeze(mean(roidata(selected_rois, :, :), 3)));
-        xlim([timestart-.1, timestop]);
-        xlabel('Time (s)');
-        ylabel('Activation (Am)');
-        titlestr = sprintf('%s %s Selected ROI Waves', subjname, subsname);
-        title(titlestr);
-        legend(selected_roinames)
+        %plot(sample_times, squeeze(mean(roidata(selected_rois, :, :), 3)));
+        %xlim([timestart-.1, timestop]);
+        %xlabel('Time (s)');
+        %ylabel('Activation (Am)');
+        %titlestr = sprintf('%s %s Selected ROI Waves', subjname, subsname);
+        %title(titlestr);
+        %legend(selected_roinames)
         
         filename = sprintf('%s/%s_%s_act_selectrois.png', imdir, subject.name, condition.name);
         saveas(gcf, filename);
@@ -252,3 +252,6 @@ if(nargout == 1 && exist('report', 'var'));
 end
 
 end % function
+
+
+    
