@@ -44,7 +44,7 @@ if(~isempty(strfind(operation, 'c')))
         block = subject.blocks{i_block};
         
         % Load in the block data
-        filename = sprintf('%s/%s/%s_%s.txt', gps_presets('parameters'), study.name, study.name, block);
+        filename = sprintf('%s/%s/%s_%s.txt', gps_presets('studyparameters'), study.name, study.name, block);
         fid = fopen(filename);
         blockdata = textscan(fid, '%[^\t]\t%[^\t]\t%[^\t]\t%[^\t\n\r]');
         fclose(fid);

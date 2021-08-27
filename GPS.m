@@ -46,7 +46,7 @@ setenv("STUDY_DIR", gps_data_dir());
 shell = strsplit(getenv('SHELL'), "/");
 if ((shell(end) == "bash") || (shell(end) == "sh"))
   state.setenv = sprintf("source %s/gps_init.bash; ", state.dir);
-else if ((shell(end) == "tcsh") || (shell(end) == "csh"))
+elseif ((shell(end) == "tcsh") || (shell(end) == "csh"))
   state.setenv = sprintf("source %s/gps_init.csh; ", state.dir);
 end
 

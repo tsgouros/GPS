@@ -13,7 +13,7 @@ state = gpse_get;
 %% Load study list
 
 % Get the list of folders from the parameters folder
-files = dir(gps_presets('parameters'));
+files = dir(gps_presets('studyparameters'));
 
 % Presume each name of a folder is a different study (should be)
 state.studies = {files.name};

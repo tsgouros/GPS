@@ -26,7 +26,7 @@ if (nargout == 1) % Fetching a parameter
     if(~isempty(studystructs) && isfield(studystructs, parameter))
         varargout{1} = studystructs.(parameter);
     else % Otherwise get it from the parameter file
-        filename = sprintf('%s/%s/%s.mat', gps_presets('parameters'), state.study, parameter);
+        filename = sprintf('%s/%s/%s.mat', gps_presets('studyparameters'), state.study, parameter);
         if(exist(filename, 'file'))
             varargout{1} = load(filename);
         
@@ -47,7 +47,7 @@ else % Saving a parameter
         parameter = varargin{2};
     end
     
-    filename = sprintf('%s/%s/%s.mat', gps_presets('parameters'), parameter.study, parameter.name);
+    filename = sprintf('%s/%s/%s.mat', gps_presets('studyparameters'), parameter.study, parameter.name);
     
     % Save the file
     save(filename, '-struct', 'parameter');

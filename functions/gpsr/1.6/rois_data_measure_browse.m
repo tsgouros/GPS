@@ -1,4 +1,4 @@
-function rois_data_measure_browse(GPSR_vars, type)
+function GPSR_vars = rois_data_measure_browse(GPSR_vars, type)
 % Browses for the measure data file
 %
 % Author: Conrad Nied
