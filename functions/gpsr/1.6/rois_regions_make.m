@@ -1,4 +1,4 @@
-function rois_regions_make(GPSR_vars, varargin)
+function GPSR_vars = rois_regions_make(GPSR_vars, varargin)
 % Makes ROIs based on similarity and other metrics
 %
 % Author: Conrad Nied
@@ -32,7 +32,7 @@ log_filename = '';
 
 % Setup Similarity processing
 set(GPSR_vars.metrics_list, 'Value', 5);
-rois_metrics_settings_load(GPSR_vars, 0);
+GPSR_vars = rois_metrics_settings_load(GPSR_vars, 0);
 set(GPSR_vars.regions_list, 'Value', selection);
 
 redundant_points = [];
@@ -66,7 +66,7 @@ while(~isempty(selection))
     
     % Compute similarity
     set(GPSR_vars.metrics_sim_centroids, 'Value', i_point);
-    rois_metrics_settings_change(GPSR_vars.metrics_sim_centroids, GPSR_vars);
+    GPSR_vars = rois_metrics_settings_change(GPSR_vars.metrics_sim_centroids, GPSR_vars);
 
     % Get similarity
 %     simmetric = getappdata(GPSR_vars.datafig, 'sim');
@@ -178,9 +178,9 @@ set(GPSR_vars.metrics_sim_centroids, 'Value', min(i_point, length(points)));
 
 setappdata(GPSR_vars.datafig, 'points', points);
 setappdata(GPSR_vars.datafig, 'rois_settings', rois);
-rois_centroids_list(GPSR_vars)
+GPSR_vars = rois_centroids_list(GPSR_vars)
 GPSR_vars = guidata(GPSR_vars.regions_list);
-rois_draw(GPSR_vars);
+GPSR_vars = rois_draw(GPSR_vars);
 
 end % function
 

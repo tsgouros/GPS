@@ -1,4 +1,4 @@
-function rois_centroids_list(GPSR_vars)
+function GPSR_vars = rois_centroids_list(GPSR_vars)
 % Lists the centroids in the proper GUI locations
 %
 % Author: Conrad Nied

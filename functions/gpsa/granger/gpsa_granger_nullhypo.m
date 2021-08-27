@@ -1,3 +1,4 @@
+
 function varargout = gpsa_granger_nullhypo(varargin)
 % Generates null hypotheses to compare against the Granger results
 % Modeled after Sato et al., 2009
@@ -69,30 +70,45 @@ if(~isempty(strfind(operation, 'c')))
     src_selection = condition.granger.focus;
     
     if(~isempty(src_selection))
-        src_ROIs = zeros(N_ROIs, 1);
+        focus_ROIs = zeros(N_ROIs, 1);
         for i_ROI = 1:N_ROIs
             for isrc_selection = 1:length(src_selection)
                 if(~isempty(strfind(all_rois{i_ROI}, src_selection{isrc_selection})))
-                    src_ROIs(i_ROI)=1;
+                    focus_ROIs(i_ROI)=1;
                 end
             end
         end
         
-        src_ROIs = find(src_ROIs);
-        snk_ROIs = src_ROIs;
+        src_ROIs{1} = find(focus_ROIs); %first set with focus ROIs as source
+		src_ROIs{2} = 1:N_ROIs; %second set with all ROIs as source
+		snk_ROIs{1} = 1:N_ROIs;	%first set with all ROIs as sink
+        snk_ROIs{2} = src_ROIs{1}; %second set with focus ROIs as sink
     else
         src_ROIs = 1:N_ROIs;
         snk_ROIs = 1:N_ROIs;
     end
-    N_src = length(src_ROIs);
-    N_snk = length(snk_ROIs);
+
+	if iscell(src_ROIs)
+		N_sets = length(src_ROIs);
+	else
+		N_sets = 1;
+	end
+    N_src = max(length(src_ROIs{1}), length(src_ROIs{2}));
+    N_snk = max(length(snk_ROIs{1}), length(snk_ROIs{2}));
+    
+    N_src_set1 = length(src_ROIs{1});
+    N_snk_set1 = length(snk_ROIs{1});
+    N_src_set2 = length(src_ROIs{2});
+    N_snk_set2 = length(snk_ROIs{2});
     
     % Preallocate the huge null hypothesis matrix
-    total_control_granger = zeros(N_snk, N_src, N_time, N_comp, 'single');
+%     total_control_granger = nan(N_snk, N_src, N_time, N_comp, 'single'); %change to nan to hopefully prevent problems when it is used since it will be a sparse matrix
+    total_control_granger_set1 = nan(N_snk_set1, N_src_set1, N_time, N_comp, 'single');
+    total_control_granger_set2 = nan(N_snk_set2, N_src_set2, N_time, N_comp, 'single');
     
     % Parallel Processing
     %N_parallel_processes = 8;
-    N_parallel_processes = 2;
+    N_parallel_processes = 16; %clive has 16 cores to processs 10/26/2020 ON
     %matlabpool(num2str(N_parallel_processes))
     parpool(N_parallel_processes);
     
@@ -120,25 +136,25 @@ if(~isempty(strfind(operation, 'c')))
                     residuals_resample(i_trial, i_ROI, :) = residuals(i_trial, i_ROI, reorder);
                 end % For all time
             end % For all trials
-            
+            i_set = 1;
             % Compare all ROIs...
-            for i_src = 1:N_src
-                i_ROI = src_ROIs(i_src); %#ok<*PFBNS>
+            for i_src = 1:N_src_set1
+                i_ROI_src = src_ROIs{i_set}(i_src); %#ok<*PFBNS>
                 
                 % ... with all other ROIs
                 % run time
-                for i_snk = 1:N_snk
-                    j_ROI = snk_ROIs(i_snk);
+                for i_snk = 1:N_snk_set1
+                    j_ROI_snk = snk_ROIs{i_set}(i_snk);
                     
                     bstrap_time = zeros(N_trials, N_ROIs, N_time);
                     
                     % Indices in the source space that record ROI i influece.
-                    model_order_end = j_ROI*model_order;
+                    model_order_end = j_ROI_snk*model_order;
                     start_ind = model_order_end - (model_order-1);
                     
                     % Define the source space excluding ROI i (xi)
                     sspace_xi = sspace;
-                    sspace_xi(start_ind:model_order_end,i_ROI,:) = 0;
+                    sspace_xi(start_ind:model_order_end,i_ROI_src,:) = 0;
                     
                     % Build a new time series
                     for n = (model_order+1):N_time % Length in terms of time
@@ -159,11 +175,58 @@ if(~isempty(strfind(operation, 'c')))
                     
                     % Run granger on this
                     
-                    control_granger = gps_granger(bstrap_time, model_order, pred_adapt, i_ROI, j_ROI); % Specifing Source and Sink nodes
-                    total_control_granger(i_snk, i_src, :, i_comp) = single(control_granger(j_ROI, i_ROI, :)); %#ok<PFOUS>
+                    control_granger = gps_granger(bstrap_time, model_order, pred_adapt, i_ROI_src, j_ROI_snk); % Specifing Source and Sink nodes
+                    total_control_granger_set1(i_snk, i_src, :, i_comp) = single(control_granger(j_ROI_snk, i_ROI_src, :)); %#ok<PFOUS>
                     
                 end
             end % For all ROIs
+
+			i_set = 2;
+            % Compare all ROIs...
+            for i_src = 1:N_src_set2
+                i_ROI_src = src_ROIs{i_set}(i_src); %#ok<*PFBNS>
+                
+                % ... with all other ROIs
+                % run time
+                for i_snk = 1:N_snk_set2
+                    j_ROI_snk = snk_ROIs{i_set}(i_snk);
+                    
+                    bstrap_time = zeros(N_trials, N_ROIs, N_time);
+                    
+                    % Indices in the source space that record ROI i influece.
+                    model_order_end = j_ROI_snk*model_order;
+                    start_ind = model_order_end - (model_order-1);
+                    
+                    % Define the source space excluding ROI i (xi)
+                    sspace_xi = sspace;
+                    sspace_xi(start_ind:model_order_end,i_ROI_src,:) = 0;
+                    
+                    % Build a new time series
+                    for n = (model_order+1):N_time % Length in terms of time
+                        
+                        % Build the time window for the current timepoint
+                        H = data(:, :, n - (model_order:-1:1));
+                        H = reshape(H, N_trials, N_ROIs * model_order);
+                        
+                        sspace_xi_n = squeeze(sspace_xi(:,:,n));
+                        
+                        % Generate a new dataset for this relationship
+                        bstrap_time(:,:,n) = (H * sspace_xi_n);
+                    end
+                    
+                    bstrap_time = bstrap_time + residuals_resample;
+                    
+                    bstrap_time(:,:,1:model_order) = data(:,:,1:model_order);
+                    
+                    % Run granger on this
+                    
+                    control_granger = gps_granger(bstrap_time, model_order, pred_adapt, i_ROI_src, j_ROI_snk); % Specifing Source and Sink nodes
+                    total_control_granger_set2(i_snk, i_src, :, i_comp) = single(control_granger(j_ROI_snk, i_ROI_src, :)); %#ok<PFOUS>
+                    
+                end
+            end % For all ROIs
+            
+            
             
             % Mark how long it has taken
             filename = sprintf('%s/%d.txt', prog_dir, i_comp);
@@ -179,6 +242,17 @@ if(~isempty(strfind(operation, 'c')))
             fprintf('%s in% 4.0f seconds, est. %.2f h remaining\n', history_comment, duration, etaleft);
             gpsa_log(state, duration, history_comment);
         end
+        
+        total_control_granger = nan(N_snk, N_src, N_time, N_comp, 'single');
+        total_control_granger(snk_ROIs{1}, src_ROIs{1}, :, :) = total_control_granger_set1;
+        clear total_control_granger_set1
+        total_control_granger(snk_ROIs{2}, src_ROIs{2}, :, :) = total_control_granger_set2;
+        clear total_control_granger_set2
+        %total_control_granger(snk_ROIs{1}, src_ROIs{1}, :, :) = total_control_granger_set1;
+        %clear total_control_granger_set1
+        %total_control_granger(snk_ROIs{2}, src_ROIs{2}, :, :) = total_control_granger_set2;
+        %clear total_control_granger_set2
+        
     catch errormsg
         % Clean up progress checker and parallel processing pool
         rmdir(prog_dir, 's');
