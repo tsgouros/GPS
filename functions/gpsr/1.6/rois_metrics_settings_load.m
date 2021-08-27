@@ -1,4 +1,4 @@
-function rois_metrics_settings_load(GPSR_vars, varargin)
+function GPSR_vars = rois_metrics_settings_load(GPSR_vars, varargin)
 % Change the settings for a given metric (usually called by a button press)
 %
 % Author: Conrad Nied
@@ -189,7 +189,7 @@ setappdata(GPSR_vars.datafig, metric.type, metric);
 
 if(repanel)
     set(GPSR_vars.panels_metrics, 'Value', 1);
-    rois_panels(GPSR_vars.metrics_list, GPSR_vars);
+    GPSR_vars = rois_panels(GPSR_vars.metrics_list, GPSR_vars);
 end
 
 end % function

@@ -1,4 +1,4 @@
-function rois_centroids_findmaximal(GPSR_vars)
+function GPSR_vars = rois_centroids_findmaximal(GPSR_vars)
 % Finds the top percentile of points for the maximal activity map
 %
 % Author: Conrad Nied
@@ -128,9 +128,9 @@ set(GPSR_vars.centroids_show, 'Enable', 'on');
 
 % Update the GUI
 guidata(GPSR_vars.centroids_find, GPSR_vars);
-rois_centroids_list(GPSR_vars);
+GPSR_vars = rois_centroids_list(GPSR_vars);
 GPSR_vars = guidata(GPSR_vars.centroids_find);
-rois_draw(GPSR_vars);
+GPSR_vars = rois_draw(GPSR_vars);
 % rois_draw_thresh(GPSR_vars.brain_maxact_color, GPSR_vars);
             
 end % function

@@ -13,6 +13,8 @@ function gpsp_draw_timecourse(draw)
 
 %% Fill in unknown data
 
+disp(draw);
+
 if(~isfield(draw, 'values')); error('Must provide data values'); end
 if(~isfield(draw, 'criteria')); draw.criteria = zeros(size(draw.values)); end
 if(sum(size(draw.values) ~= size(draw.criteria)) > 0); error('Values and Criteria matrices have different sizes'); end

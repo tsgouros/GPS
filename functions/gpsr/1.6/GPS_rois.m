@@ -61,7 +61,7 @@ handles.output = hObject;
 set(handles.axes_brain, 'Position', [300 20 800 600]);
 
 % Banish unused menues
-rois_panels(handles.panels_data, handles)
+handles = rois_panels(handles.panels_data, handles)
 handles = guidata(hObject);
 
 % Set up auxiliary figure for saving data
@@ -127,7 +127,7 @@ set(handles.data_study_list, 'Value', i_study);
 guidata(hObject, handles);
 
 % Set the study
-rois_data_study_load(handles);
+handles = rois_data_study_load(handles);
 
 % UIWAIT makes GPS_rois wait for user response (see UIRESUME)
 % uiwait(handles.guifig);
@@ -145,14 +145,14 @@ varargout{1} = handles.output;
 
 function brain_left_Callback(hObject, eventdata, handles)
 set(handles.quick_left, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function brain_right_Callback(hObject, eventdata, handles)
 set(handles.quick_right, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function brain_perspective_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function brain_perspective_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -160,7 +160,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function brain_surface_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function brain_surface_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -168,25 +168,25 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function brain_gyrisulci_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function brain_fsregions_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function brain_shadows_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function panels_data_Callback(hObject, eventdata, handles)
-rois_panels(hObject, handles)
+handles = rois_panels(hObject, handles)
 
 function panels_brain_Callback(hObject, eventdata, handles)
-rois_panels(hObject, handles)
+handles = rois_panels(hObject, handles)
 
 function panels_centroids_Callback(hObject, eventdata, handles)
-rois_panels(hObject, handles)
+handles = rois_panels(hObject, handles)
 
 function data_study_list_Callback(hObject, eventdata, handles) %#ok<*INUSL,*DEFNU>
-rois_data_study_load(handles);
+handles = rois_data_study_load(handles);
 
 function data_study_list_CreateFcn(hObject, eventdata, handles) %#ok<*INUSD>
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -194,7 +194,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function data_subject_list_Callback(hObject, eventdata, handles)
-rois_data_subject_load(handles);
+handles = rois_data_subject_load(handles);
 
 function data_subject_list_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -202,7 +202,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function data_condition_list_Callback(hObject, eventdata, handles)
-rois_data_condition_load(handles);
+handles = rois_data_condition_load(handles);
 
 function data_condition_list_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -210,7 +210,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function data_set_list_Callback(hObject, eventdata, handles)
-rois_data_set_load(handles);
+handles = rois_data_set_load(handles);
 
 function data_set_list_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -218,36 +218,36 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function quick_pauseautoredraw_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function panels_metrics_Callback(hObject, eventdata, handles)
-rois_panels(hObject, handles)
+handles = rois_panels(hObject, handles)
 
 function panels_regions_Callback(hObject, eventdata, handles)
 set(handles.metrics_list, 'Value', 5);
-rois_metrics_settings_load(handles, 0);
-rois_panels(hObject, handles)
+handles = rois_metrics_settings_load(handles, 0);
+handles = rois_panels(hObject, handles)
 
 function panels_save_Callback(hObject, eventdata, handles)
-rois_panels(hObject, handles)
+handles = rois_panels(hObject, handles)
 
 function data_mne_load_Callback(hObject, eventdata, handles)
-rois_data_measure_load(hObject, handles);
+handles = rois_data_measure_load(hObject, handles);
 
 function data_mne_browse_Callback(hObject, eventdata, handles)
-rois_data_measure_browse(handles, 'mne');
+handles = rois_data_measure_browse(handles, 'mne');
 
 function data_plv_load_Callback(hObject, eventdata, handles)
-rois_data_measure_load(hObject, handles);
+handles = rois_data_measure_load(hObject, handles);
 
 function data_plv_browse_Callback(hObject, eventdata, handles)
-rois_data_measure_browse(handles, 'plv');
+handles = rois_data_measure_browse(handles, 'plv');
 
 function data_custom_load_Callback(hObject, eventdata, handles)
-rois_data_measure_load(hObject, handles);
+handles = rois_data_measure_load(hObject, handles);
 
 function data_custom_browse_Callback(hObject, eventdata, handles)
-rois_data_measure_browse(handles, 'custom');
+handles = rois_data_measure_browse(handles, 'custom');
 
 function data_custom_text_Callback(hObject, eventdata, handles)
 rois_data_measure_rename(handles, 'custom');
@@ -275,10 +275,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function data_oldregions_load_Callback(hObject, eventdata, handles)
-rois_data_measure_load(hObject, handles);
+handles = rois_data_measure_load(hObject, handles);
 
 function data_oldregions_browse_Callback(hObject, eventdata, handles)
-rois_data_measure_browse(handles, 'oldregions');
+handles = rois_data_measure_browse(handles, 'oldregions');
 
 function data_oldregions_text_Callback(hObject, eventdata, handles)
 rois_data_measure_rename(handles, 'oldregions');
@@ -290,62 +290,62 @@ end
 
 function quick_left_Callback(hObject, eventdata, handles)
 set(handles.brain_left, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function quick_right_Callback(hObject, eventdata, handles)
 set(handles.brain_right, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function quick_mne_Callback(hObject, eventdata, handles)
 metric = getappdata(handles.datafig, 'mne');
 metric.vis.show = get(hObject, 'Value');
 setappdata(handles.datafig, 'mne', metric);
 set(handles.metrics_list, 'Value', 1);
-rois_metrics_settings_load(handles, 0)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_load(handles, 0)
+handles = rois_metrics_settings_change(hObject, handles);
 
 function quick_plv_Callback(hObject, eventdata, handles)
 metric = getappdata(handles.datafig, 'plv');
 metric.vis.show = get(hObject, 'Value');
 setappdata(handles.datafig, 'plv', metric);
 set(handles.metrics_list, 'Value', 2);
-rois_metrics_settings_load(handles, 0);
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_load(handles, 0);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function quick_custom_Callback(hObject, eventdata, handles)
 metric = getappdata(handles.datafig, 'custom');
 metric.vis.show = get(hObject, 'Value');
 setappdata(handles.datafig, 'custom', metric);
 set(handles.metrics_list, 'Value', 3);
-rois_metrics_settings_load(handles, 0)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_load(handles, 0)
+handles = rois_metrics_settings_change(hObject, handles);
 
 function quick_maxact_Callback(hObject, eventdata, handles)
 metric = getappdata(handles.datafig, 'maxact');
 metric.vis.show = get(hObject, 'Value');
 setappdata(handles.datafig, 'maxact', metric);
 set(handles.metrics_list, 'Value', 4);
-rois_metrics_settings_load(handles, 0)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_load(handles, 0)
+handles = rois_metrics_settings_change(hObject, handles);
 
 function quick_sim_Callback(hObject, eventdata, handles)
 metric = getappdata(handles.datafig, 'sim');
 metric.vis.show = get(hObject, 'Value');
 setappdata(handles.datafig, 'sim', metric);
 set(handles.metrics_list, 'Value', 5);
-rois_metrics_settings_load(handles, 0)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_load(handles, 0)
+handles = rois_metrics_settings_change(hObject, handles);
 
 function quick_centroids_Callback(hObject, eventdata, handles)
 set(handles.centroids_show, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function quick_regions_Callback(hObject, eventdata, handles)
 set(handles.regions_show, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function metrics_maxact_basis_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_maxact_basis_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -353,10 +353,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_maxact_basis2_on_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_maxact_basis2_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_maxact_basis2_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -364,13 +364,13 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_regional_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_standard_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_standard_mean_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function centroids_spatialex_Callback(hObject, eventdata, handles)
 % Nothing
@@ -394,10 +394,10 @@ end
 function centroids_find_Callback(hObject, eventdata, handles)
 % if(~isappdata(handles.datafig, 'maxact'))
     set(handles.metrics_list, 'Value', 4);
-    rois_metrics_settings_load(handles, 0);
+    handles = rois_metrics_settings_load(handles, 0);
 %     rois_metrics_settings_change(handles.metrics_list, handles);
 % end
-rois_centroids_findmaximal(handles);
+handles = rois_centroids_findmaximal(handles);
 
 function centroids_percentile_Callback(hObject, eventdata, handles)
 % Nothing
@@ -408,7 +408,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_time_start_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_time_start_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -416,7 +416,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_time_stop_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_time_stop_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -425,7 +425,7 @@ end
 
 function centroids_show_Callback(hObject, eventdata, handles)
 set(handles.quick_centroids, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function regions_list_Callback(hObject, eventdata, handles)
 % centroid = get(hObject, 'Value');
@@ -461,10 +461,10 @@ function regions_list_Callback(hObject, eventdata, handles)
 
 value = get(hObject, 'Value');
 set(handles.metrics_list, 'Value', 5);
-rois_metrics_settings_load(handles, 0);
+handles = rois_metrics_settings_load(handles, 0);
 set(hObject, 'Value', value);
 set(handles.metrics_sim_centroids, 'Value', value(1));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 guidata(hObject, handles);
 
@@ -474,9 +474,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_list_Callback(hObject, eventdata, handles)
-rois_metrics_settings_load(handles);
-rois_metrics_settings_change(hObject, handles);
-% rois_panels(hObject, handles);
+handles = rois_metrics_settings_load(handles);
+handles = rois_metrics_settings_change(hObject, handles);
+% handles = rois_panels(hObject, handles);
 
 function metrics_list_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -493,17 +493,17 @@ metric.vis.show = get(hObject, 'Value');
 setappdata(handles.datafig, type, metric);
 
 % Load Settings and alter the graph
-rois_metrics_settings_load(handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_load(handles)
+handles = rois_metrics_settings_change(hObject, handles);
 
 metric = getappdata(handles.datafig, 'mne');
 metric.vis.show = get(hObject, 'Value');
 setappdata(handles.datafig, 'mne', metric);
-rois_metrics_settings_load(handles);
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_load(handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_vis_color_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_vis_color_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -511,7 +511,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_vis_t1_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_vis_t1_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -522,7 +522,7 @@ function metrics_vis_t2_Callback(hObject, eventdata, handles)
 if(get(handles.metrics_list, 'Value') == 5)
     set(handles.regions_redun, 'String', get(hObject, 'String'));
 end
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_vis_t2_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -533,7 +533,7 @@ function metrics_vis_t3_Callback(hObject, eventdata, handles)
 if(get(handles.metrics_list, 'Value') == 5)
     set(handles.regions_sim, 'String', get(hObject, 'String'));
 end
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_vis_t3_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -542,14 +542,14 @@ end
 
 function metrics_vis_perc_Callback(hObject, eventdata, handles)
 set(handles.metrics_vis_abs, 'Value', ~get(hObject, 'Value'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_vis_abs_Callback(hObject, eventdata, handles)
 set(handles.metrics_vis_perc, 'Value', ~get(hObject, 'Value'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_time_comp_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_time_comp_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -557,7 +557,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_time_comp2_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_time_comp2_CreateFcn(hObject, eventdata, handles)
 
@@ -566,7 +566,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_standard_scope_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_standard_scope_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -655,15 +655,15 @@ if(~isnumeric(direc))
 end
 
 function regions_make_Callback(hObject, eventdata, handles)
-rois_regions_make(handles);
+handles = rois_regions_make(handles);
 
 function regions_show_Callback(hObject, eventdata, handles)
 set(handles.quick_regions, 'Value', get(hObject, 'Value'));
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function regions_sim_Callback(hObject, eventdata, handles)
 set(handles.metrics_vis_t3, 'String', get(hObject, 'String'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function regions_sim_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -672,7 +672,7 @@ end
 
 function regions_act_weight_Callback(hObject, eventdata, handles)
 set(handles.metrics_sim_act_weight, 'String', get(hObject, 'String'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function regions_act_weight_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -681,7 +681,7 @@ end
 
 function regions_act_Callback(hObject, eventdata, handles)
 set(handles.metrics_sim_act, 'Value', get(hObject, 'Value'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function regions_act_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -690,7 +690,7 @@ end
 
 function regions_redun_Callback(hObject, eventdata, handles)
 set(handles.metrics_vis_t2, 'String', get(hObject, 'String'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function regions_redun_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -706,11 +706,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function regions_make_all_Callback(hObject, eventdata, handles)
-rois_regions_make(handles, 'all');
+handles = rois_regions_make(handles, 'all');
 
 function regions_spatial_Callback(hObject, eventdata, handles)
 set(handles.metrics_sim_locality, 'String', get(hObject, 'String'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function regions_spatial_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -719,7 +719,7 @@ end
 
 function metrics_sim_centroids_Callback(hObject, eventdata, handles)
 set(handles.regions_list, 'Value', get(hObject, 'Value'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_sim_centroids_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -796,7 +796,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function metrics_sim_norm_Callback(hObject, eventdata, handles)
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_sim_norm_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -804,20 +804,20 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function centroids_show_text_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function regions_show_text_Callback(hObject, eventdata, handles)
-rois_draw(handles);
+handles = rois_draw(handles);
 
 function regions_remove_Callback(hObject, eventdata, handles)
-rois_regions_remove(handles);
+handles = rois_regions_remove(handles);
 
 function regions_remove_all_Callback(hObject, eventdata, handles)
-rois_regions_remove(handles, 'all');
+handles = rois_regions_remove(handles, 'all');
 
 function metrics_sim_act_weight_Callback(hObject, eventdata, handles)
 set(handles.regions_act_weight, 'String', get(hObject, 'String'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_sim_act_weight_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -826,7 +826,7 @@ end
 
 function metrics_sim_act_Callback(hObject, eventdata, handles)
 set(handles.regions_act, 'Value', get(hObject, 'Value'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_sim_act_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -835,7 +835,7 @@ end
 
 function metrics_sim_locality_Callback(hObject, eventdata, handles)
 set(handles.regions_spatial, 'String', get(hObject, 'String'));
-rois_metrics_settings_change(hObject, handles);
+handles = rois_metrics_settings_change(hObject, handles);
 
 function metrics_sim_locality_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -853,7 +853,7 @@ if(~exist(folder, 'dir')); mkdir(folder); end
 for angle = 0:10:360
     handles.angle = angle;
     
-    rois_draw(handles);
+    handles = rois_draw(handles);
     
     frame = getframe(handles.axes_brain);
 %     mov(i_frame) = frame;
@@ -863,7 +863,7 @@ end
 
 handles = rmfield(handles, 'angle');
 
-rois_draw(handles);
+handles = rois_draw(handles);
 
 % Create AVI file
 % fps = get(handles.frames_fps, 'String');

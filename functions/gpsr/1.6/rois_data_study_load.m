@@ -1,4 +1,4 @@
-function rois_data_study_load(GPSR_vars)
+function GPSR_vars = rois_data_study_load(GPSR_vars)
 % Loads the selected study on the study list
 %
 % Author: Conrad Nied
@@ -16,7 +16,6 @@ studies = get(GPSR_vars.data_study_list, 'String');
 i_study = get(GPSR_vars.data_study_list, 'Value');
 GPSR_vars.study = studies{i_study};
 study = gpsr_parameter(GPSR_vars, GPSR_vars.study);
-study.mri.dir = '/autofs/space/clive_001/users/adriana/OliviaData/UAG_new/MRI' %Olivia Made this hack on September 24th 2020 to to get around the problem that GPS ROIs wouldn't load the study data
 
 %% Subjects List
 
@@ -40,7 +39,7 @@ else
 end
 set(GPSR_vars.data_subject_list, 'Value', i_subject);
 
-rois_data_subject_load(GPSR_vars);
+GPSR_vars = rois_data_subject_load(GPSR_vars);
 GPSR_vars = guidata(GPSR_vars.data_subject_list);
 
 % Subject will do conditions then set
