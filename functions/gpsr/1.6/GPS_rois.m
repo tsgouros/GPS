@@ -85,7 +85,7 @@ axis(handles.axes_histogram, 'off');
 
 % Defaults
 handles.name = 'state';
-handles.dir = gps_presets('dir');
+handles.dir = gps_presets('studydir');
 handles.study = 'PTC3';
 handles.subject = 'average';
 handles.condition = 'HPword';
@@ -95,7 +95,7 @@ set(handles.quick_pauseautoredraw, 'Value', 1);
 % Get a passed in GPS_vars structure
 if(~isempty(varargin))
     state = varargin{1};
-    if(isfield(state, 'dir')); handles.dir = state.dir; end
+    if(isfield(state, 'dir')); handles.dir = state.datadir; end
     if(isfield(state, 'study')); handles.study = state.study; end
     if(isfield(state, 'subject')); handles.subject = state.subject; end
     if(isfield(state, 'subset')); handles.condition = state.subset; end
