@@ -39,7 +39,8 @@ set(GPSR_vars.data_set_list, 'Value', i_set);
 GPSR_vars.set = sets{i_set};
 
 GPSR_vars = rois_data_set_load(GPSR_vars);
-GPSR_vars = guidata(GPSR_vars.data_set_list);
+tmp = guidata(GPSR_vars.data_set_list);
+GPSR_vars.data_set_list = tmp.data_set_list;
 
 %% Update the GUI
 guidata(GPSR_vars.data_condition_list, GPSR_vars);

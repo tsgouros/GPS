@@ -137,8 +137,8 @@ switch type
             GPSR_vars = guidata(GPSR_vars.(button));
             rois_metrics_compute(GPSR_vars.(button), GPSR_vars);
         else
-            warning = sprintf('You do not have a STC or MAT file listed for the %s measure',...
-                type);
+            warning = sprintf('You do not have a STC or MAT file listed for the %s measure\n%s',...
+                type, file);
             warndlg(warning);
         end
     case 'oldregions'

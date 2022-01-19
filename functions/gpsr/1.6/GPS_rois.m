@@ -61,21 +61,23 @@ handles.output = hObject;
 set(handles.axes_brain, 'Position', [300 20 800 600]);
 
 % Banish unused menues
-handles = rois_panels(handles.panels_data, handles)
+handles = rois_panels(handles.panels_data, handles);
 handles = guidata(hObject);
 
 % Set up auxiliary figure for saving data
 handles.datafig = 675200;
 figure(handles.datafig);
+
 set(handles.datafig, 'Menubar', 'none');
 set(handles.datafig, 'Toolbar', 'none');
 set(handles.datafig, 'Name', 'GPS rois data figure <<Do not close>>');
 set(handles.datafig, 'Numbertitle', 'off');
 % title(gca, {'This figure contains data for GPS\_rois.', 'Do not close until you are done with GPS\_rois'});
-axis(gca, 'off')
+axis(gca, 'off');
 pos = get(handles.datafig, 'Position');
 pos(2) = 10;
 pos(4) = 10;
+
 set(handles.datafig, 'Position', pos);
 % text(handles.datafig, 0.5, 0.5, {'This figure contains data for GPS_rois.', '<b>Do not close until you are done with GPS_rois</b>'});
 figure(handles.guifig);
@@ -98,7 +100,8 @@ if(~isempty(varargin))
     if(isfield(state, 'dir')); handles.dir = state.datadir; end
     if(isfield(state, 'study')); handles.study = state.study; end
     if(isfield(state, 'subject')); handles.subject = state.subject; end
-    if(isfield(state, 'subset')); handles.condition = state.subset; end
+    if(isfield(state, 'condition')); handles.condition = state.condition; end
+    if(isfield(state, 'subset')); handles.subset = state.subset; end
 end
 
 handles.savedir = [handles.dir '/parameters'];

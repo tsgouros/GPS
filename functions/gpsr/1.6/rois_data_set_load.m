@@ -26,7 +26,8 @@ condition = gpsr_parameter(GPSR_vars, GPSR_vars.condition);
 
 % Set browsing defaults
 GPSR_vars = rois_data_measure_defaults(GPSR_vars);
-GPSR_vars = guidata(GPSR_vars.data_subject_list);
+tmp = guidata(GPSR_vars.data_subject_list);
+GPSR_vars.data_subject_list = tmp.data_subject_list;
 
 %% Update the GUI
 guidata(GPSR_vars.data_set_list, GPSR_vars);
