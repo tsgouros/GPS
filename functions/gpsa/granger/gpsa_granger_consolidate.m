@@ -30,6 +30,13 @@ end
 %% Execute the process
 
 if(~isempty(strfind(operation, 'c')))
+ 
+    %% This is a list of the "good" ROIs, the ones shown to be of
+    %% interest through the SVM process.  This line will be replaced by
+    %% a way to select them.
+    goodROIs = ["L_MTG_1", "R_MTG_1"];
+    %% Also need to get the exploded time series and the labels.
+
     
     study = gpsa_parameter(state.study);
     condition = gpsa_parameter(state.condition);

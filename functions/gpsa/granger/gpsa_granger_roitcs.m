@@ -39,7 +39,8 @@ if(~isempty(strfind(operation, 'c')))
         state.progressfid = 1; % stdout
     end
     
-    flag_image = 1;
+    % Set this flag to 1 to see an empty figure.
+    flag_image = 0; % tsg turned off 1/22
     
     if(flag_image)
         imdir = gps_filename(study, subject, 'mne_images_dir');
@@ -165,8 +166,22 @@ if(~isempty(strfind(operation, 'c')))
     fprintf(state.progressfid, '\tGet ROI data\n');
     rois = load(filename);
     
-    roidata = cortexdata_waves([rois.rois.decIndex], :, :);
-    
+    % This if presents two alternatives.  One is the 'avatar' 
+    % approach, where the time series that represents each roi
+    % is the most active vertex within that ROI, while the 
+    % other uses a time series made up of an average of the
+    % vertices within the ROI.           tsg 1/22
+    if (1)
+        % Use the average approach. The rois.averageActivation
+        % was calculated in gpsa_granger_rois.
+        N_rois = size(rois.rois, 2);
+        roidata = vertcat(rois.rois(1:N_rois).averageActivation);
+    else
+        % Use the avatar approach.  This is the 'original' GPS
+        % method.
+        roidata = cortexdata_waves([rois.rois.decIndex], :, :);
+    end
+        
     if(flag_image)
         % Format subject name
         subjname = subject.name;

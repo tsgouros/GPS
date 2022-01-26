@@ -47,7 +47,8 @@ if(~isempty(strfind(operation, 'c')))
     tbegin = tic;
     
     % Configure
-    flag_image = 1;
+    % Set this to 1 to see an empty figure. Not sure why this is.
+    flag_image = 0; % tsg turned off 1/22 
     
     % Import their brain
     brain = gps_brain_get(subject);
@@ -142,9 +143,19 @@ if(~isempty(strfind(operation, 'c')))
                 labelfile_contents = mne_read_label_file(labelfile);
                 [activity, ~, vertices] = mne_label_time_courses(labelfile, actfile); % mid is time
                 
-                % Do not repeat vertices (this is a quick not the best fix)
-                [~, max_i] = sort(sum(activity(:, time_focus), 2)); % Find the max total activity value
+                % Avatar method. We characterize an ROI by using the
+                % activation time series from a single vertex within
+                % it. We choose the one with the "highest" activation
+                % value, defined as the integral of activation over
+                % the time range.                            tsg 1/22
+                [~, max_i] = sort(sum(activity(:, time_focus), 2));
+
+                % While we're here, we'll also calculate an average
+                % waveform, and tuck it into the roi data structure
+                % for use later in gpsa_granger_roitcs.      tsg 1/22
+                averageActivationSeries = mean(activity(:, :), 1);
                 
+                % Do not repeat vertices (this is a quick not the best fix)
                 while(sum(vertices(max_i(end)) == ROIcents))
                     max_i(end) = [];
                 end
@@ -156,6 +167,8 @@ if(~isempty(strfind(operation, 'c')))
                 % Name
                 roi.name = roi_file(1 : end - 9);
                 roi.file = labelfile;
+                % Add the average waveform, for use later.    tsg 1/22
+                roi.averageActivation = averageActivationSeries;
                 
                 % Features
                 dashes = strfind(roi.name, '-');
