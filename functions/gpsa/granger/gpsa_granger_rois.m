@@ -167,8 +167,6 @@ if(~isempty(strfind(operation, 'c')))
                 % Name
                 roi.name = roi_file(1 : end - 9);
                 roi.file = labelfile;
-                % Add the average waveform, for use later.    tsg 1/22
-                roi.averageActivation = averageActivationSeries;
                 
                 % Features
                 dashes = strfind(roi.name, '-');
@@ -191,6 +189,22 @@ if(~isempty(strfind(operation, 'c')))
                 
                 if(isempty(roi.decIndex));
                     error('Did not find the decimated index of the %s', roi.name);
+                end
+
+                % Add the average waveform, for use later.    tsg 1/22
+                roi.averageActivation = averageActivationSeries;
+
+                % Also add a mapping between vertex numbers and the
+                % corresponding activation time series, also for use
+                % later.                                      tsg 1/22
+                roi.vertexMap = [];
+                for kVertex = 1:length(vertices)
+                  if (strcmp(hemi, 'lh'))
+                    vertexNumber = vertices(kVertex);
+                  else
+                    vertexNumber = vertices(kVertex) + double(brain.N_L);
+                  end
+                  roi.vertexMap(kVertex) = find(brain.decIndices == vertexNumber);
                 end
                 
                 % FS Parcellation

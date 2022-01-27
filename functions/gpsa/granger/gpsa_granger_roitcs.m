@@ -169,13 +169,17 @@ if(~isempty(strfind(operation, 'c')))
     % This if presents two alternatives.  One is the 'avatar' 
     % approach, where the time series that represents each roi
     % is the most active vertex within that ROI, while the 
-    % other uses a time series made up of an average of the
+    % other uses a time series made up of averages of the
     % vertices within the ROI.           tsg 1/22
     if (1)
         % Use the average approach. The rois.averageActivation
         % was calculated in gpsa_granger_rois.
         N_rois = size(rois.rois, 2);
-        roidata = vertcat(rois.rois(1:N_rois).averageActivation);
+        % This next line gives you time series smoothed over trials.  Usually ignore.
+        % roidata = vertcat(rois.rois(1:N_rois).averageActivation);
+        for i_roi = 1:length(rois.rois)
+            roidata(i_roi, :) = mean(cortexdata_waves([rois.rois(i_roi).vertexMap], :, :), 1);
+        end
     else
         % Use the avatar approach.  This is the 'original' GPS
         % method.
