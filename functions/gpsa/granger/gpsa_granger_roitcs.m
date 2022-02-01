@@ -175,8 +175,6 @@ if(~isempty(strfind(operation, 'c')))
         % Use the average approach. The rois.averageActivation
         % was calculated in gpsa_granger_rois.
         N_rois = size(rois.rois, 2);
-        % This next line gives you time series smoothed over trials.  Usually ignore.
-        % roidata = vertcat(rois.rois(1:N_rois).averageActivation);
         for i_roi = 1:length(rois.rois)
             roidata(i_roi, :) = mean(cortexdata_waves([rois.rois(i_roi).vertexMap], :, :), 1);
         end
@@ -184,6 +182,66 @@ if(~isempty(strfind(operation, 'c')))
         % Use the avatar approach.  This is the 'original' GPS
         % method.
         roidata = cortexdata_waves([rois.rois.decIndex], :, :);
+    end
+
+    % Also check to see if there are decoding results.  If there are,
+    % we want to create time series averages for each of the exploded
+    % pieces of the ROI, as well as a time series of the average error
+    % for each ROI.
+    decodeROIs = [];
+    for iRoi = 1:length(rois.rois)
+      roiDir = sprintf("%s/%s", ...
+                       gps_filename(study, subject, condition, ...
+                                    'decoding_analysis_subject_roi_labels_dir'), ...
+                       rois.rois(iRoi).name);
+      labelFiles = dir(roiDir);
+      if (~isempty(labelFiles))
+        % There are results for this ROI, collect all the labels for
+        % each subdivision.
+
+        % First, ignore the '.' and '..' returned by dir().
+        labelFiles = labelFiles(3:end);
+
+        % The ROI child structure names the ROI and contains a list of the 
+        % sub-ROIs that it contains.
+        decodeROI.name = rois.rois(iRoi).name;
+        decodeROI.subrois = [];
+
+        % Loop through the subdivisions and grab data when there is a match.
+        for iLabelFile = 1:length(labelFiles)
+          labelFileContents = mne_read_label_file(sprintf("%s/%s", roiDir, ...
+                                                          labelFiles(iLabelFile).name));
+          subroi.parent = rois.rois(iRoi).name;
+          % Grab the name of this sub-roi from the file name.
+          [~, subroi.name, ~] = fileparts(labelFiles(iLabelFile).name);
+          subroi.vertexMap = [];
+          subroi.vertices = [];
+
+          %% Check to make sure at least one of the subROI's vertices
+          %% has an activation time series associated with it.
+          if (sum(ismember(labelFileContents.vertices, rois.rois(iRoi).vertices)) > 0)
+            % If so, find it.
+            for iVertex = 1:length(labelFileContents.vertices)
+              if (ismember(labelFileContents.vertices(iVertex), ...
+                           rois.rois(iRoi).vertices))
+                 i = find(labelFileContents.vertices(iVertex) == ...
+                          rois.rois(iRoi).vertices);
+                 subroi.vertices = [subroi.vertices rois.rois(iRoi).vertices(i)];
+                 subroi.vertexMap = [subroi.vertexMap rois.rois(iRoi).vertexMap(i)];
+              end
+            end
+            % Grab the activation data for each of the vertices in this subROI 
+            % that have any.
+            subroi.activationData = mean(cortexdata_waves([subroi.vertexMap], :), 1);
+          else
+            subroi.activationData = [];
+            disp(sprintf("Missing a time series for %s", ...
+                         labelFiles(iLabelFile).name));
+          end
+          decodeROI.subrois = [decodeROI.subrois subroi];
+        end
+        decodeROIs = [decodeROIs, decodeROI];
+      end
     end
         
     if(flag_image)
@@ -236,6 +294,7 @@ if(~isempty(strfind(operation, 'c')))
     
     savedata.data = roidata;
     savedata.rois = rois.rois;
+    savedata.decodeROIs = decodeROIs;
     savedata.sample_times = sample_times;
     savedata.study = study.name;
     savedata.subject = subject.name;

@@ -517,6 +517,15 @@ switch filetarget
             filename = sprintf('%s/results/%s_%s_tests_*.mat',...
                 study.granger.dir, study.name, condition.name);
         end
+    case 'decoding_analysis_dir'
+        filename = sprintf("%s/SVM", study.basedir);
+    case 'decoding_analysis_subject_dir'
+        filename = sprintf("%s/%s", gps_filename(study, subject, condition, 'decoding_analysis_dir'),...
+            subject.name);
+    case 'decoding_analysis_subject_roi_labels_dir'
+        filename = sprintf("%s/labels", gps_filename(study, subject, condition, 'decoding_analysis_subject_dir'));
+    case 'decoding_analysis_subject_results_dir'
+        filename = sprintf("%s/results", gps_filename(study, subject, condition, 'decoding_analysis_subject_dir'));
     otherwise
         error('Filetarget %s does not exist\n', filetarget)
 end

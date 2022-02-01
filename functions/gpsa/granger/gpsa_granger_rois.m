@@ -150,11 +150,6 @@ if(~isempty(strfind(operation, 'c')))
                 % the time range.                            tsg 1/22
                 [~, max_i] = sort(sum(activity(:, time_focus), 2));
 
-                % While we're here, we'll also calculate an average
-                % waveform, and tuck it into the roi data structure
-                % for use later in gpsa_granger_roitcs.      tsg 1/22
-                averageActivationSeries = mean(activity(:, :), 1);
-                
                 % Do not repeat vertices (this is a quick not the best fix)
                 while(sum(vertices(max_i(end)) == ROIcents))
                     max_i(end) = [];
@@ -190,9 +185,6 @@ if(~isempty(strfind(operation, 'c')))
                 if(isempty(roi.decIndex));
                     error('Did not find the decimated index of the %s', roi.name);
                 end
-
-                % Add the average waveform, for use later.    tsg 1/22
-                roi.averageActivation = averageActivationSeries;
 
                 % Also add a mapping between vertex numbers and the
                 % corresponding activation time series, also for use
