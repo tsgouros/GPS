@@ -239,6 +239,15 @@ if(~isempty(strfind(operation, 'c')))
                          labelFiles(iLabelFile).name));
           end
           decodeROI.subrois = [decodeROI.subrois subroi];
+          
+          % While we're here, also grab the error time series...
+          resultFile = sprintf("%s/%s/%s_%s_neighbors_aveAccuracy.mat", ...
+              gps_filename(study, subject, condition, 'decoding_analysis_subject_results_dir'),...
+              rois.rois(iRoi).name, subject.name, rois.rois(iRoi).name);
+          avgAccuracy = load(resultFile);
+          % ... and pack it into the decodingROI struct.
+          decodeROI.avgAccuracy = avgAccuracy.accuracy_ave;
+          
         end
         decodeROIs = [decodeROIs, decodeROI];
       end
