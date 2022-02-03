@@ -30,14 +30,7 @@ end
 %% Execute the process
 
 if(~isempty(strfind(operation, 'c')))
- 
-    %% This is a list of the "good" ROIs, the ones shown to be of
-    %% interest through the SVM process.  This line will be replaced by
-    %% a way to select them.
-    goodROIs = ["L_MTG_1", "R_MTG_1"];
-    %% Also need to get the exploded time series and the labels.
-
-    
+     
     study = gpsa_parameter(state.study);
     condition = gpsa_parameter(state.condition);
     state.function = 'gpsa_granger_consolidate';
@@ -74,6 +67,8 @@ if(~isempty(strfind(operation, 'c')))
                 
                 N_waves = 0;
                 data = zeros(N_waves, N_ROIs, N_samples);
+
+                decodingROIs = [];
             end % if this is the first subject
             
             if(isempty(roidata.data))
@@ -86,6 +81,29 @@ if(~isempty(strfind(operation, 'c')))
                 for i_wave = 1:N_waves_subject
                     for i_ROI = 1:N_ROIs
                         data(i_wave + N_waves, i_ROI, :) = interp1(roidata.sample_times, squeeze(roidata.data(i_ROI, :, i_wave)), sample_times);
+                    end
+
+		    % What is happening here is that we are rearranging the
+		    % sub-roi data so that it is sorted by ROI and subject,
+		    % instead of subject and ROI, which is how it arrives.  It
+		    % arrives as a struct containing a collection of subject
+		    % data, each of which contains a set of ROIs, each with
+		    % accuracy data and a collection of subROI data. We leave
+		    % with a collection of ROIs, with the subject data combined
+		    % into big blocks.
+
+                    % For this subject (wave) make an array of the subROI
+                    % time series collection and the avgAccuracy series,
+                    % too.
+                    for (i_ROI = 1:length(roidata.decodeROIs))
+                      decodingROIs(i_ROI).name = roidata.decodeROIs(i_ROI).name;
+                      decodingROIs(i_ROI).avgAccuracy(i_subject, :) = ...
+                          interp1(roidata.sample_times, roidata.decodeROIs(i_ROI).avgAccuracy, sample_times);
+                      N_subROIs = length(roidata.decodeROIs(i_ROI).subrois);
+                      for (i_subROI = 1:N_subROIs)
+                        decodingROIs(i_ROI).subROIdata(i_subROI + (N_subROIs * (i_subject - 1)), :) = ...
+                          interp1(roidata.sample_times, roidata.decodeROIs(i_ROI).subrois(i_subROI).activationData, sample_times);
+                      end
                     end
                 end
                 fprintf(' %d waves saved.\n', N_waves_subject);
@@ -108,6 +126,7 @@ if(~isempty(strfind(operation, 'c')))
     savefile.data = data;
     savefile.sample_times = sample_times;
     savefile.rois = rois;
+    savefile.decodingROIs = decodingROIs;
     save(savefile.filename, '-struct', 'savefile');
     % Record the process
     gpsa_log(state, toc(tbegin));
