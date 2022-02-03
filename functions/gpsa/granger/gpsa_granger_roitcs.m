@@ -239,16 +239,23 @@ if(~isempty(strfind(operation, 'c')))
                          labelFiles(iLabelFile).name));
           end
           decodeROI.subrois = [decodeROI.subrois subroi];
-          
-          % While we're here, also grab the error time series...
-          resultFile = sprintf("%s/%s/%s_%s_neighbors_aveAccuracy.mat", ...
-              gps_filename(study, subject, condition, 'decoding_analysis_subject_results_dir'),...
-              rois.rois(iRoi).name, subject.name, rois.rois(iRoi).name);
-          avgAccuracy = load(resultFile);
-          % ... and pack it into the decodingROI struct.
-          decodeROI.avgAccuracy = avgAccuracy.accuracy_ave;
-          
         end
+        % While we're here, also grab the error time series...
+        resultFile = sprintf("%s/%s/%s_%s_neighbors_aveAccuracy.mat", ...
+          gps_filename(study, subject, condition, 'decoding_analysis_subject_results_dir'),...
+          rois.rois(iRoi).name, subject.name, rois.rois(iRoi).name);
+        avgAccuracy = load(resultFile);
+        % ... and pack it into the decodingROI struct.
+        decodeROI.avgAccuracy = avgAccuracy.accuracy_ave;
+          
+        % This is just a hack for testing, because the data that I have
+        % to work with has mismatched time bases. Remove this for
+        % production, though it might not actually make a difference.
+        if (length(decodeROI.avgAccuracy) < N_samples)
+          trash = [decodeROI.avgAccuracy decodeROI.avgAccuracy];
+          decodeROI.avgAccuracy = trash(1:N_samples);
+        end
+        
         decodeROIs = [decodeROIs, decodeROI];
       end
     end
