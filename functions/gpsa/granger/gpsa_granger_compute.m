@@ -72,6 +72,16 @@ if(~isempty(strfind(operation, 'c')))
         % Granger
         granger_results = gps_sethgranger_granger(datafile.data, model_order, pred_adapt);
         
+    % This is the decoding analysis, with the activation series and sub-ROIs.
+    elseif (1)
+        stream = '';
+        
+        % Initial Kalman
+        [sspace, W_all, residual] = gps_kalman(datafile.data, model_order, pred_adapt);
+        
+        % Granger
+        granger_results = gps_granger_decode(datafile.data, model_order, pred_adapt, datafile.decodingROIs, datafile.rois);
+
     else % Regular
         stream = '';
         
