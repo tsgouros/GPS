@@ -101,7 +101,7 @@ if(~isempty(strfind(operation, 'c')))
                           interp1(roidata.sample_times, roidata.decodeROIs(i_ROI).avgAccuracy, sample_times);
                       N_subROIs = length(roidata.decodeROIs(i_ROI).subrois);
                       for (i_subROI = 1:N_subROIs)
-                        decodingROIs(i_ROI).subROIdata(i_subROI + (N_subROIs * (i_subject - 1)), :) = ...
+                        decodingROIs(i_ROI).subROIdata(i_subject, i_subROI, :) = ...
                           interp1(roidata.sample_times, roidata.decodeROIs(i_ROI).subrois(i_subROI).activationData, sample_times);
                       end
                     end
