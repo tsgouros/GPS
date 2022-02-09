@@ -72,7 +72,9 @@ if(~isempty(strfind(operation, 'c')))
         % Granger
         granger_results = gps_sethgranger_granger(datafile.data, model_order, pred_adapt);
         
-    % This is the decoding analysis, with the activation series and sub-ROIs.
+    % This is the decoding analysis, with the activation series and sub-ROIs.  I do
+    % not have a way to toggle whether to use this or not, so change the (1) to a 
+    % (0) to get the normal behavior.
     elseif (1)
         stream = '';
         
