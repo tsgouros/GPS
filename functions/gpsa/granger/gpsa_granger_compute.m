@@ -102,7 +102,8 @@ if(~isempty(strfind(operation, 'c')))
     description = sprintf('%s%s', description, stream);
     datafile.description = description;
     
-    datafile.granger_results = granger_results;
+    datafile.granger_results = granger_results(1).indices;
+    datafile.granger_result_package = granger_results;
     datafile.sspace = sspace;
     datafile.W_all = W_all;
     datafile.residual = residual;
