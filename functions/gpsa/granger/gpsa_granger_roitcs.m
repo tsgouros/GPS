@@ -241,19 +241,39 @@ if(~isempty(strfind(operation, 'c')))
           decodeROI.subrois = [decodeROI.subrois subroi];
         end
         % While we're here, also grab the error time series...
-        resultFile = sprintf("%s/%s/%s_%s_neighbors_aveAccuracy.mat", ...
+         
+        resultFile = sprintf("%s/%s/%s_%s*.mat", ...
           gps_filename(study, subject, condition, 'decoding_analysis_subject_results_dir'),...
           rois.rois(iRoi).name, subject.name, rois.rois(iRoi).name);
-        avgAccuracy = load(resultFile);
+        resultFile = dir(resultFile);
+        avgAccuracy = load(fullfile(resultFile.folder, resultFile.name));
         % ... and pack it into the decodingROI struct.
-        decodeROI.avgAccuracy = avgAccuracy.accuracy_ave;
+        names = fieldnames(avgAccuracy);
+        ind = contains(names, 'accuracy');
+        decodeROI.avgAccuracy = avgAccuracy.(names{ind});
           
-        % This is just a hack for testing, because the data that I have
-        % to work with has mismatched time bases. Remove this for
-        % production, though it might not actually make a difference.
-        if (length(decodeROI.avgAccuracy) < N_samples)
-          trash = [decodeROI.avgAccuracy decodeROI.avgAccuracy];
-          decodeROI.avgAccuracy = trash(1:N_samples);
+        % DS: changed to zeropadding for production
+        acc_zeroindex = find(avgAccuracy.Time==0);
+        mne_zeroindex = find(sample_times==0);
+        while (length(decodeROI.avgAccuracy) ~= N_samples) || (acc_zeroindex ~= mne_zeroindex) %if there's a mismatch in length or 
+          if acc_zeroindex < mne_zeroindex
+              padbefore = mne_zeroindex - acc_zeroindex;
+              decodeROI.avgAccuracy = [zeros(1, padbefore), decodeROI.avgAccuracy];
+              avgAccuracy.Time = [nan(1, padbefore), avgAccuracy.Time];
+          elseif acc_zeroindex > mne_zeroindex
+              removebefore = acc_zeroindex - mne_zeroindex;
+              decodeROI.avgAccuracy = decodeROI.avgAccuracy(1+removebefore:end);
+              avgAccuracy.Time = avgAccuracy.Time(1+removebefore:end);
+          elseif length(decodeROI.avgAccuracy) > N_samples
+              removeafter = length(decodeROI.avgAccuracy) - N_samples;
+              decodeROI.avgAccuracy = decodeROI.avgAccuracy(1:end-removeafter);
+              avgAccuracy.Time = avgAccuracy.Time(1:end-removeafter);
+          elseif length(decodeROI.avgAccuracy) < N_samples
+              padafter = N_samples - length(decodeROI.avgAccuracy);
+              decodeROI.avgAccuracy = [decodeROI.avgAccuracy, zeros(1, padafter)];
+              avgAccuracy.Time = [avgAccuracy.Time, zeros(1, padafter)];
+          end
+          acc_zeroindex = find(avgAccuracy.Time==0);
         end
         
         decodeROIs = [decodeROIs, decodeROI];
