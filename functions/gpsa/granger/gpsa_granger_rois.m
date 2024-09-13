@@ -47,7 +47,8 @@ if(~isempty(strfind(operation, 'c')))
     tbegin = tic;
     
     % Configure
-    flag_image = 1;
+    % Set this to 1 to see an empty figure. Not sure why this is.
+    flag_image = 0; % tsg turned off 1/22 
     
     % Import their brain
     brain = gps_brain_get(subject);
@@ -142,9 +143,14 @@ if(~isempty(strfind(operation, 'c')))
                 labelfile_contents = mne_read_label_file(labelfile);
                 [activity, ~, vertices] = mne_label_time_courses(labelfile, actfile); % mid is time
                 
+                % Avatar method. We characterize an ROI by using the
+                % activation time series from a single vertex within
+                % it. We choose the one with the "highest" activation
+                % value, defined as the integral of activation over
+                % the time range.                            tsg 1/22
+                [~, max_i] = sort(sum(activity(:, time_focus), 2));
+
                 % Do not repeat vertices (this is a quick not the best fix)
-                [~, max_i] = sort(sum(activity(:, time_focus), 2)); % Find the max total activity value
-                
                 while(sum(vertices(max_i(end)) == ROIcents))
                     max_i(end) = [];
                 end
@@ -178,6 +184,19 @@ if(~isempty(strfind(operation, 'c')))
                 
                 if(isempty(roi.decIndex));
                     error('Did not find the decimated index of the %s', roi.name);
+                end
+
+                % Also add a mapping between vertex numbers and the
+                % corresponding activation time series, also for use
+                % later.                                      tsg 1/22
+                roi.vertexMap = [];
+                for kVertex = 1:length(vertices)
+                  if (strcmp(hemi, 'lh'))
+                    vertexNumber = vertices(kVertex);
+                  else
+                    vertexNumber = vertices(kVertex) + double(brain.N_L);
+                  end
+                  roi.vertexMap(kVertex) = find(brain.decIndices == vertexNumber);
                 end
                 
                 % FS Parcellation

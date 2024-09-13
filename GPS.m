@@ -34,11 +34,7 @@ state.name = 'state';
 
 % Initialize the state structure
 state.dir = gps_presets('dir');
-state.datadir = '$STUDY_DIR';
-setenv("STUDY_DIR", gps_data_dir());
-%% Should have something like the following to override the above.
-%% state.datadir = gps_presets('datadir');
-
+state.datadir = gps_presets('studydir')
 
 % We are going to cheat here by loading the necessary environment
 % variables for Freesurfer and MNE each time those programs are 

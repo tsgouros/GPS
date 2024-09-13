@@ -39,7 +39,8 @@ if(~isempty(strfind(operation, 'c')))
         state.progressfid = 1; % stdout
     end
     
-    flag_image = 1;
+    % Set this flag to 1 to see an empty figure.
+    flag_image = 0; % tsg turned off 1/22
     
     if(flag_image)
         imdir = gps_filename(study, subject, 'mne_images_dir');
@@ -165,8 +166,120 @@ if(~isempty(strfind(operation, 'c')))
     fprintf(state.progressfid, '\tGet ROI data\n');
     rois = load(filename);
     
-    roidata = cortexdata_waves([rois.rois.decIndex], :, :);
-    
+    % This if presents two alternatives.  One is the 'avatar' 
+    % approach, where the time series that represents each roi
+    % is the most active vertex within that ROI, while the 
+    % other uses a time series made up of averages of the
+    % vertices within the ROI.           tsg 1/22
+    if (1)
+        % Use the average approach. The rois.averageActivation
+        % was calculated in gpsa_granger_rois.
+        N_rois = size(rois.rois, 2);
+        for i_roi = 1:length(rois.rois)
+            roidata(i_roi, :) = mean(cortexdata_waves([rois.rois(i_roi).vertexMap], :, :), 1);
+        end
+    else
+        % Use the avatar approach.  This is the 'original' GPS
+        % method.
+        roidata = cortexdata_waves([rois.rois.decIndex], :, :);
+    end
+
+    % Also check to see if there are decoding results.  If there are,
+    % we want to create time series averages for each of the exploded
+    % pieces of the ROI, as well as a time series of the average error
+    % for each ROI.
+    decodeROIs = [];
+    for iRoi = 1:length(rois.rois)
+      roiDir = sprintf("%s/%s", ...
+                       gps_filename(study, subject, condition, ...
+                                    'decoding_analysis_subject_roi_labels_dir'), ...
+                       rois.rois(iRoi).name);
+      labelFiles = dir(roiDir);
+      if (~isempty(labelFiles))
+        % There are results for this ROI, collect all the labels for
+        % each subdivision.
+
+        % First, ignore the '.' and '..' returned by dir().
+        labelFiles = labelFiles(3:end);
+
+        % The ROI child structure names the ROI and contains a list of the 
+        % sub-ROIs that it contains.
+        decodeROI.name = rois.rois(iRoi).name;
+        decodeROI.subrois = [];
+
+        % Loop through the subdivisions and grab data when there is a match.
+        for iLabelFile = 1:length(labelFiles)
+          labelFileContents = mne_read_label_file(sprintf("%s/%s", roiDir, ...
+                                                          labelFiles(iLabelFile).name));
+          subroi.parent = rois.rois(iRoi).name;
+          % Grab the name of this sub-roi from the file name.
+          [~, subroi.name, ~] = fileparts(labelFiles(iLabelFile).name);
+          subroi.vertexMap = [];
+          subroi.vertices = [];
+
+          %% Check to make sure at least one of the subROI's vertices
+          %% has an activation time series associated with it.
+          if (sum(ismember(labelFileContents.vertices, rois.rois(iRoi).vertices)) > 0)
+            % If so, find it.
+            for iVertex = 1:length(labelFileContents.vertices)
+              if (ismember(labelFileContents.vertices(iVertex), ...
+                           rois.rois(iRoi).vertices))
+                 i = find(labelFileContents.vertices(iVertex) == ...
+                          rois.rois(iRoi).vertices);
+                 subroi.vertices = [subroi.vertices rois.rois(iRoi).vertices(i)];
+                 subroi.vertexMap = [subroi.vertexMap rois.rois(iRoi).vertexMap(i)];
+              end
+            end
+            % Grab the activation data for each of the vertices in this subROI 
+            % that have any.
+            subroi.activationData = mean(cortexdata_waves([subroi.vertexMap], :), 1);
+          else
+            subroi.activationData = [];
+            disp(sprintf("Missing a time series for %s", ...
+                         labelFiles(iLabelFile).name));
+          end
+          decodeROI.subrois = [decodeROI.subrois subroi];
+        end
+        % While we're here, also grab the error time series...
+         
+        resultFile = sprintf("%s/%s/%s_%s*.mat", ...
+          gps_filename(study, subject, condition, 'decoding_analysis_subject_results_dir'),...
+          rois.rois(iRoi).name, subject.name, rois.rois(iRoi).name);
+        resultFile = dir(resultFile);
+        avgAccuracy = load(fullfile(resultFile.folder, resultFile.name));
+        % ... and pack it into the decodingROI struct.
+        names = fieldnames(avgAccuracy);
+        ind = contains(names, 'accuracy');
+        decodeROI.avgAccuracy = avgAccuracy.(names{ind});
+          
+        % DS: changed to zeropadding for production
+        acc_zeroindex = find(avgAccuracy.Time==0);
+        mne_zeroindex = find(sample_times==0);
+        while (length(decodeROI.avgAccuracy) ~= N_samples) || (acc_zeroindex ~= mne_zeroindex) %if there's a mismatch in length or 
+          if acc_zeroindex < mne_zeroindex
+              padbefore = mne_zeroindex - acc_zeroindex;
+              decodeROI.avgAccuracy = [zeros(1, padbefore), decodeROI.avgAccuracy];
+              avgAccuracy.Time = [nan(1, padbefore), avgAccuracy.Time];
+          elseif acc_zeroindex > mne_zeroindex
+              removebefore = acc_zeroindex - mne_zeroindex;
+              decodeROI.avgAccuracy = decodeROI.avgAccuracy(1+removebefore:end);
+              avgAccuracy.Time = avgAccuracy.Time(1+removebefore:end);
+          elseif length(decodeROI.avgAccuracy) > N_samples
+              removeafter = length(decodeROI.avgAccuracy) - N_samples;
+              decodeROI.avgAccuracy = decodeROI.avgAccuracy(1:end-removeafter);
+              avgAccuracy.Time = avgAccuracy.Time(1:end-removeafter);
+          elseif length(decodeROI.avgAccuracy) < N_samples
+              padafter = N_samples - length(decodeROI.avgAccuracy);
+              decodeROI.avgAccuracy = [decodeROI.avgAccuracy, zeros(1, padafter)];
+              avgAccuracy.Time = [avgAccuracy.Time, zeros(1, padafter)];
+          end
+          acc_zeroindex = find(avgAccuracy.Time==0);
+        end
+        
+        decodeROIs = [decodeROIs, decodeROI];
+      end
+    end
+        
     if(flag_image)
         % Format subject name
         subjname = subject.name;
@@ -217,6 +330,7 @@ if(~isempty(strfind(operation, 'c')))
     
     savedata.data = roidata;
     savedata.rois = rois.rois;
+    savedata.decodeROIs = decodeROIs;
     savedata.sample_times = sample_times;
     savedata.study = study.name;
     savedata.subject = subject.name;
