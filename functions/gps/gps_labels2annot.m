@@ -105,7 +105,10 @@ i_label_r = 0;
 
 for i_label = 1:length(labels)
     area = labels_area{i_label};
-    i_lookup = find(strcmp(area, colortable_original.textdata(4:end, 2)));
+    %i_lookup = find(strcmp(area, colortable_original.textdata(4:end, 2)));
+    i_lookup = find(strcmp(area, colortable_original.textdata(3:end, 2)));   
+    %%%%%%%%% Changed "4"->"3" SA 2019-05-23
+    
     color = colortable_original.data(i_lookup, :); %#ok<FNDSB>
     
     % Get the color and modulate its chroma and luna if it isn't the first
@@ -146,9 +149,10 @@ filename = sprintf('%s/label/rh.%s.annot', subject.mri.dir, condition.name);
 if(exist(filename, 'file')); delete(filename); end
 
 % olddir = cd(dir_annot);
-unix_command = sprintf('mris_label2annot --ctab %s%s --s %s --a %s --h lh', colortable_filename_lh, labelstr_lh, subject.name, condition.cortex.roiset);
+%% Added explicit reference to state.fshome -ts
+unix_command = sprintf('%s $FREESURFER_HOME/bin/mris_label2annot --ctab %s%s --s %s --a %s --h lh', state.setenv, colortable_filename_lh, labelstr_lh, subject.name, condition.cortex.roiset);
 unix(unix_command);
-unix_command = sprintf('mris_label2annot --ctab %s%s --s %s --a %s --h rh', colortable_filename_rh, labelstr_rh, subject.name, condition.cortex.roiset);
+unix_command = sprintf('%s $FREESURFER_HOME/bin/mris_label2annot --ctab %s%s --s %s --a %s --h rh', state.setenv, colortable_filename_rh, labelstr_rh, subject.name, condition.cortex.roiset);
 unix(unix_command);
 % cd(olddir);
 % unix_command = sprintf('mris_label2annot --ctab %s --ldir %s --s %s --a %s --h lh', colortable_filename, dir_annot, subject.name, condition.cortex.roiset);

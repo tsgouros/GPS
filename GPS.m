@@ -13,17 +13,17 @@ function GPS
 % analyses of those data.
 %
 % Copyright (C) 2014  Alexander Conrad Nied and David Gow
-% 
+%
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
 % the Free Software Foundation, either version 3 of the License, or
 % (at your option) any later version.
-% 
+%
 % This program is distributed in the hope that it will be useful,
 % but WITHOUT ANY WARRANTY; without even the implied warranty of
 % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % GNU General Public License for more details.
-% 
+%
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -34,6 +34,21 @@ state.name = 'state';
 
 % Initialize the state structure
 state.dir = gps_presets('dir');
+state.datadir = '$STUDY_DIR';
+setenv("STUDY_DIR", gps_data_dir());
+%% Should have something like the following to override the above.
+%% state.datadir = gps_presets('datadir');
+
+
+% We are going to cheat here by loading the necessary environment
+% variables for Freesurfer and MNE each time those programs are 
+% invoked, instead of relying on the inherited environment.
+shell = strsplit(getenv('SHELL'), "/");
+if ((shell(end) == "bash") || (shell(end) == "sh"))
+  state.setenv = sprintf("source %s/gps_init.bash; ", state.dir);
+else if ((shell(end) == "tcsh") || (shell(end) == "csh"))
+  state.setenv = sprintf("source %s/gps_init.csh; ", state.dir);
+end
 
 % Get the position of the monitor
 state.gui.position.screen = get(0, 'ScreenSize');
@@ -77,7 +92,7 @@ set(state.gui.analysis, 'Position', [20, 125, 120, 25]);
 set(state.gui.analysis, 'BackgroundColor', [0.8 0.8 0.8]);
 set(state.gui.analysis, 'String', 'Analysis');
 set(state.gui.analysis, 'FontSize', 14);
-set(state.gui.analysis, 'Callback', 'GPSa;');
+set(state.gui.analysis, 'Callback', {@GPSa, state});
 % delete(' num2str(state.gui.fig) ');
 
 % Draw the Editor button

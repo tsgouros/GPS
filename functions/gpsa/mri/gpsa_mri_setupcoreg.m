@@ -10,6 +10,7 @@ function varargout = gpsa_mri_setupcoreg(varargin)
 % 2013.04.11 - GPS 1.8, Updated the status check to the new system
 % 2013.04.24 - Changed subset/subsubset to condition/subset
 % 2013.07.02 - Reverted status check to function specific
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -39,9 +40,9 @@ if(~isempty(strfind(operation, 'c')))
         overstring = '';
     end
     
-    % Run the unix command
-    unix_command = sprintf('mne_setup_mri%s --subject %s',...
-        overstring, subject.name);
+    % Run the unix command (with explicit reference to mnehome.  -tsg)
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_setup_mri%s --subject %s',...
+                           state.setenv, overstring, subject.name);
     unix(unix_command);
     
     % Record the process

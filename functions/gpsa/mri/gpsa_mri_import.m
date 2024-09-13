@@ -11,6 +11,7 @@ function varargout = gpsa_mri_import(varargin)
 % 2013.04.11 - GPS 1.8, Updated the status check to the new system
 % 2013.04.24 - Changed subset/subsubset to condition/subset
 % 2013.07.02 - Reverted status check to function specific
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -48,7 +49,10 @@ if(~isempty(strfind(operation, 'c')))
     switch choice
         case 'Bourget'
             % Use the findsession terminal command to find the file
-            [~, returned_text] = unix(['findsession ' subject.name]);
+            %% Added explicit reference to fshome.  -tsg
+            fscommand = sprintf('%s/bin/findsession %s',...
+                                state.fshome, subject.name)
+            [~, returned_text] = unix(fscommand);
             
             % Cut out the part of the returned text that says were the file is
             % located

@@ -61,7 +61,8 @@ if(~isempty(strfind(operation, 'c')))
     
     % Specific Parameters
     [N_trials, N_ROIs, N_time] = size(data);
-    N_comp = 2000;
+    %N_comp = 2000;
+    N_comp = study.granger.N_comp;
     
     % Determine the areas to focus on
     all_rois = {rois.name};
@@ -90,8 +91,10 @@ if(~isempty(strfind(operation, 'c')))
     total_control_granger = zeros(N_snk, N_src, N_time, N_comp, 'single');
     
     % Parallel Processing
-    N_parallel_processes = 8;
-    matlabpool(num2str(N_parallel_processes))
+    %N_parallel_processes = 8;
+    N_parallel_processes = 2;
+    %matlabpool(num2str(N_parallel_processes))
+    parpool(N_parallel_processes);
     
     % Make a progress marking directory
     prog_dir = sprintf('%s/GPS/tmp_%s', gps_presets('parameters'), datestr(now, 'yyyymmdd_hhMMss'));
@@ -179,14 +182,16 @@ if(~isempty(strfind(operation, 'c')))
     catch errormsg
         % Clean up progress checker and parallel processing pool
         rmdir(prog_dir, 's');
-        matlabpool close
+        %matlabpool close
+        delete(gcp('nocreate'))
         
         rethrow(errormsg);
     end
     
     % Clean up progress checker and parallel processing pool
     rmdir(prog_dir, 's');
-    matlabpool close
+    %matlabpool close
+    delete(gcp('nocreate'))
     
     save(outputfilename, '-v7.3');
     

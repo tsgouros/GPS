@@ -30,8 +30,10 @@ if(~isempty(strfind(operation, 'c')))
     subject = gpsa_parameter(state.subject);
     state.function = 'gpsa_util_browse';
     tbegin = tic;
-    
-    unix_command = sprintf('mne_browse_raw --cd %s &', gps_filename(subject, 'meg_scan_dir'));
+
+    %% Added explicit reference to mnehome.  -tsg
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_browse_raw --cd %s &',...
+                           state.setenv, gps_filename(subject, 'meg_scan_dir'));
     unix(unix_command);
     
     % Record the process

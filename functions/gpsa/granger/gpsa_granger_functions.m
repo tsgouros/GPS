@@ -9,9 +9,10 @@ function varargout = gpsa_granger_functions
 % 2013-04-26 Reordered, added in averaging routine placeholders
 % 2013-04-29 Changed menu for organization redesign
 % 2013-07-09 Reorganized signifiance testing
+% 2019-07-29 Added compute_zeros
 
-function_list = {'Process ROIs', 'MNI Coordinates', 'ROI Timecourses', 'Consolidate', 'Compute Granger', 'Null Hypotheses', 'Get Significance'};
-function_tags = {'rois', 'mni', 'roitcs', 'consolidate', 'compute', 'nullhypo', 'significance'};
+function_list = {'Process ROIs', 'MNI Coordinates', 'ROI Timecourses', 'Consolidate', 'Compute Granger', 'Comp. Granger (zeros)', 'Null Hypotheses', 'Get Significance'};
+function_tags = {'rois', 'mni', 'roitcs', 'consolidate', 'compute', 'compute_zeros', 'nullhypo', 'significance'};
 
 varargout{1} = function_tags;
 if(nargout == 2)

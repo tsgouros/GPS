@@ -16,6 +16,7 @@ function varargout = gpsa_mne_stcave(varargin)
 % 2013.05.01 - Modified status check
 % 2013.06.20 - Reverted the status check to the individual system
 % 2013.07.10 - Uses condition brain instead of study.average_brain
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -55,9 +56,9 @@ if(~isempty(strfind(operation, 'c')))
             condition.event.start + 1, condition.event.stop);
     end
     
-    % Process unix command
-    unix_command = sprintf('mne_make_movie --inv %s --stcin %s --smooth %d --morph %s  --surface inflated --stc %s --subject %s %s',...
-        subject.mne.invfile, stcfilename_orig, smooth_level, condition.cortex.brain, stcfilename, subject.name, timespec);
+    % Process unix command (added explicit mnehome reference. -tsg)
+    unix_command = sprintf('%s $MNE_ROOT/bin/mne_make_movie --inv %s --stcin %s --smooth %d --morph %s  --surface inflated --stc %s --subject %s %s',...
+        state.setenv, subject.mne.invfile, stcfilename_orig, smooth_level, condition.cortex.brain, stcfilename, subject.name, timespec);
     unix(unix_command);
     gpsa_log(state, toc(tbegin), unix_command);
     

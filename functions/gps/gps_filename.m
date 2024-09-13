@@ -48,7 +48,7 @@ for i_argin = 1:nargin
             filetarget = parameter;
         end
     else
-        error('Unknown parameter for gps_filename.\n');
+        error('Unknown parameter for gps_filename:%s\n', parameter);
     end
 end % for all input arguments
 

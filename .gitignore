@@ -10,3 +10,25 @@
 
 # Example Files
 WPM
+
+# Mac stuff
+.DS_Store
+
+# WE SHOULD NOT BE COMMITTING .mat FILES TO SOURCE CODE CONTROL
+*.mat
+
+# Auto-generated files that should not be under source control either
+gps_presets.m
+functions/gps/gps_dir.m
+gps_init.bash
+gps_init.csh
+gps_data_dir.m
+pathdef.m
+
+# User-generated files that should not be under source control.  Truth
+# to tell, they shouldn't be here at all and we are working on changing that.
+parameters/*
+log/*
+images/*
+
+

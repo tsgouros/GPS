@@ -13,6 +13,7 @@ function varargout = gpsa_mri_findfirstmprage(varargin)
 % 2013.04.11 - Updated the status check to the new system
 % 2013.04.24 - Changed subset/subsubset to condition/subset
 % 2013.07.02 - Reverted status check to function specific
+% 2019.01-03 - Added explicit pathname references to environment vars.  -tsg
 
 %% Input
 
@@ -36,10 +37,13 @@ if(~isempty(strfind(operation, 'c')))
     
     %% Find the first T1 MPRAGE file
     
-    % Unpack the scanner files
-    unix_command = sprintf('unpacksdcmdir -src %s -targ %s -scanonly %s/unpack.log',...
-        subject.mri.rawdir, subject.mri.rawdir, subject.mri.rawdir);
-    unix(unix_command);
+    % Unpack the scanner files (added explicit ref to fshome.  -tsg)
+    unix_command = sprintf('%s $FREESURFER_HOME/bin/unpacksdcmdir -src %s -targ %s -scanonly %s/unpack.log',...
+        state.setenv, subject.mri.rawdir, subject.mri.rawdir, subject.mri.rawdir);
+    [status, cmdout] = unix(unix_command);
+    
+    
+    disp(cmdout);
     
     % Scan through the unpack log for the name of the first T1 MPRAGE
     % file
@@ -67,7 +71,7 @@ end % If we should do the function
 if(~isempty(strfind(operation, 'p')))
     subject = gpsa_parameter(state, state.subject);
     report.ready = length(dir(subject.mri.rawdir)) > 2;
-    report.progress = ~~exist(subject.mri.first_mpragefile, 'file');
+    report.progress = exist(subject.mri.first_mpragefile, 'file')==2;
     report.finished = report.progress == 1;
 end
 
