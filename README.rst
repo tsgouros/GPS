@@ -8,32 +8,12 @@ This ensemble of Matlab programs provides an interactive framework for the proce
 
 For the purposes of this quick guide, I based it mostly off of `mne-python's git page <https://github.com/mne-tools/mne-python>`_
 
-** The state of the repo on the 'testing' branch supports having a
-'GBU_TEST' directory at the same level as the 'GPS' directory this
-file is stored within. 
+See the 'GPS home page <https://www.nmr.mgh.harvard.edu/software/gps>'
+for documentation, including a cookbook. In this repo, there is a
+gps-implementation manual with notes about how it all fits together.
 
-Get the latest code
-^^^^^^^^^^^^^^^^^^^
 
-To get the latest code using git, simply type::
-
-    git clone git@github.com:conradarcturus/GPS.git
-
-Initializing GPS
-^^^^^^^^^^^^^^^^^^
-
-Run the gps_init.m script in the main folder
-
-Dependencies
-^^^^^^^^^^^^
-
-* Matlab
-* Probably a toolbox or two from Matlab
-
-* MNE
-* Freesurfer
-
-Contact
+Original Credit
 ^^^^^^^^^^^^
 
 Alexander Conrad Nied (Lead Developer)
@@ -41,11 +21,6 @@ Alexander Conrad Nied (Lead Developer)
 
 David Gow (Project Manager)
     gow@helix.mgh.harvard.edu
-
-Testing Data
-^^^^^^^^^^^^^^^^^^^^^^
-
-The test data set to try out the program is not ready yet, but it will be called WPM (Word Picture Matching)
 
 Licensing
 ^^^^^^^^^
