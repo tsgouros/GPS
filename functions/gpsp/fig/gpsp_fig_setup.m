@@ -60,7 +60,7 @@ if(~isempty(i_font)); set(state.tcs_font, 'Value', i_font); end
 state.dir = gps_presets('dir');
 
 % Populate List of Studies
-studies = dir(gps_presets('parameters'));
+studies = dir(gps_presets('studyparameters'));
 studies = {studies([studies.isdir]).name};
 studies = setdiff(studies, {'.', '..', 'figures', 'status', 'labels', 'images', 'screenshots', 'GPS'});
 set(state.data_study, 'String', studies);

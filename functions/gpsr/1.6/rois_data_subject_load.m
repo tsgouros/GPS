@@ -1,4 +1,4 @@
-function rois_data_subject_load(GPSR_vars)
+function GPSR_vars = rois_data_subject_load(GPSR_vars)
 % Loads the selected subject on the study list
 %
 % Author: Conrad Nied
@@ -159,6 +159,6 @@ else
 end
 set(GPSR_vars.data_condition_list, 'Value', i_condition);
 
-rois_data_condition_load(GPSR_vars);
+GPSR_vars = rois_data_condition_load(GPSR_vars);
 
 end % function

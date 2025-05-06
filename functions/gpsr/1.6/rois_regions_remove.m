@@ -1,4 +1,4 @@
-function rois_regions_remove(GPSR_vars, varargin)
+function GPSR_vars = rois_regions_remove(GPSR_vars, varargin)
 % Makes ROIs based on similarity and other metrics
 %
 % Author: Conrad Nied
@@ -28,8 +28,8 @@ end
 points(selection) = [];
 
 setappdata(GPSR_vars.datafig, 'points', points);
-rois_centroids_list(GPSR_vars)
+GPSR_vars = rois_centroids_list(GPSR_vars)
 GPSR_vars = guidata(GPSR_vars.regions_list);
-rois_draw(GPSR_vars);
+GPSR_vars = rois_draw(GPSR_vars);
 
 end % function

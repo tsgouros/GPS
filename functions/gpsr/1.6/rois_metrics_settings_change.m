@@ -1,4 +1,4 @@
-function rois_metrics_settings_change(hObject, GPSR_vars)
+function GPSR_vars = rois_metrics_settings_change(hObject, GPSR_vars)
 % Change the settings for a given metric (usually called by a button press)
 %
 % Author: Conrad Nied

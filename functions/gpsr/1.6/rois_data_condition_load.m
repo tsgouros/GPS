@@ -1,4 +1,4 @@
-function rois_data_condition_load(GPSR_vars)
+function GPSR_vars = rois_data_condition_load(GPSR_vars)
 % Loads the selected condition on the study list
 %
 % Author: Conrad Nied
@@ -38,7 +38,7 @@ set(GPSR_vars.data_set_list, 'Value', i_set);
 
 GPSR_vars.set = sets{i_set};
 
-rois_data_set_load(GPSR_vars);
+GPSR_vars = rois_data_set_load(GPSR_vars);
 GPSR_vars = guidata(GPSR_vars.data_set_list);
 
 %% Update the GUI

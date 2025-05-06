@@ -45,7 +45,7 @@ state.studies = studies;
 gpsa_set(state);
 
 user = getenv('USER');
-userstudies_filename = sprintf('%s/GPS/userstudies.mat', gps_presets('parameters'));
+userstudies_filename = sprintf('%s/GPS/userstudies.mat', gps_presets('studyparameters'));
 if(exist(userstudies_filename, 'file'))
     userstudies = load(userstudies_filename);
 end % If the preset file exists

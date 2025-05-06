@@ -51,9 +51,13 @@ if(duration > 0); duration_string = sprintf('%3.3f', duration); end
 
 % Write entry
 filename = sprintf('%s/%s.log',...
-    gps_presets('logs'), state.study);
-fid = fopen(filename, 'a');
-fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\n', date, state.function, state.subject, state.condition, duration_string, entry);
-fclose(fid);
+		   gps_presets('logs'), state.study);
+try
+  fid = fopen(filename, 'a');
+  fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\n', date, state.function, state.subject, state.condition, duration_string, entry);
+  fclose(fid);
+catch
+  disp(['Error trying to open: ', filename]);
+end
 
 end % function

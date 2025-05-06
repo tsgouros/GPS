@@ -1,4 +1,4 @@
-function rois_data_measure_load(hObject, GPSR_vars)
+function GPSR_vars = rois_data_measure_load(hObject, GPSR_vars)
 % Loads the measure data
 %
 % Author: Conrad Nied
@@ -75,7 +75,7 @@ switch type
             guidata(GPSR_vars.data_subject_list, GPSR_vars);
             
             % Start the metric design
-            rois_metrics_settings_load(GPSR_vars);
+            GPSR_vars = rois_metrics_settings_load(GPSR_vars);
             button = sprintf('quick_%s', type);
             GPSR_vars = guidata(GPSR_vars.(button));
             rois_metrics_compute(GPSR_vars.(button), GPSR_vars);
@@ -132,7 +132,7 @@ switch type
             guidata(GPSR_vars.data_subject_list, GPSR_vars);
             
             % Start the metric design
-            rois_metrics_settings_load(GPSR_vars);
+            GPSR_vars = rois_metrics_settings_load(GPSR_vars);
             button = sprintf('quick_%s', type);
             GPSR_vars = guidata(GPSR_vars.(button));
             rois_metrics_compute(GPSR_vars.(button), GPSR_vars);

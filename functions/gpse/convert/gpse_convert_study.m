@@ -44,7 +44,7 @@ study.type = 'study';
 study.last_edited = 'new';
 
 % version
-study.version = 'GPS1.9';
+study.version = 'GPS2.0';
 
 % average_name removed
 

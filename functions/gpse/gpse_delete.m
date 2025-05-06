@@ -12,7 +12,7 @@ state = gpse_get;
 % Produce the filename for the selected file
 i_file = get(state.gui.files, 'Value');
 files = get(state.gui.files, 'String');
-filename = sprintf('%s/%s/%s.mat', gps_presets('parameters'), state.study, files{i_file});
+filename = sprintf('%s/%s/%s.mat', gps_presets('studyparameters'), state.study, files{i_file});
 
 % Check the user that he wants to delete the file
 answer = questdlg({'Are you sure you want to delete the file?', filename});

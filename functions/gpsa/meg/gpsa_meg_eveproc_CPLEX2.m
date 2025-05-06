@@ -391,7 +391,7 @@ if(~isempty(strfind(operation, 'c')))
     
     % Save
     if(strcmp(state.subject, study.average_name))
-        filename = sprintf('%s/%s/%s_behaviorals.csv', gps_presets('parameters'), study.name, study.name);
+        filename = sprintf('%s/%s/%s_behaviorals.csv', gps_presets('studyparameters'), study.name, study.name);
         
         struct2csv(trialdata, filename);
     else % Subject data to subject trialdata structure

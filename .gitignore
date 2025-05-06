@@ -23,6 +23,7 @@ functions/gps/gps_dir.m
 gps_init.bash
 gps_init.csh
 gps_data_dir.m
+gps_envvars.m
 pathdef.m
 
 # User-generated files that should not be under source control.  Truth

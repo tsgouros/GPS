@@ -1,4 +1,4 @@
-function rois_draw(GPSR_vars)
+function GPSR_vars = rois_draw(GPSR_vars)
 % Draws the brain for the GPS ROI program
 %
 % Author: Conrad Nied

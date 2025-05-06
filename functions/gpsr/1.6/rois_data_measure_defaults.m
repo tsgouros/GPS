@@ -1,4 +1,4 @@
-function rois_data_measure_defaults(state)
+function state = rois_data_measure_defaults(state)
 % Sets default values for filenames
 %
 % Author: Conrad Nied
@@ -114,6 +114,6 @@ set(state.regions_show, 'Enable', 'off');
 guidata(state.data_subject_list, state);
 
 % Draw
-rois_draw(state);
+state = rois_draw(state);
 
 end % function

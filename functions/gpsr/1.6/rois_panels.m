@@ -1,4 +1,4 @@
-function rois_panels(hObject, handles)
+function handles = rois_panels(hObject, handles)
 % Arranges panels for GPSR
 %
 % Author: Conrad Nied

@@ -19,18 +19,19 @@ if (nargout == 1) % Fetching a parameter
     end
     
     % Get it from the parameter file
-    filename = sprintf('%s/%s/%s.mat', gps_presets('parameters'), state.study, parameter);
+    filename = sprintf('%s/%s/%s.mat', gps_presets('studyparameters'), state.study, parameter);
     if(exist(filename, 'file'))
         varargout{1} = load(filename);
     else
         varargout{1} = [];
+        varargout{1}.name = state.study;
     end % If the file exists
 else % Saving a parameter
     parameter = varargin{1};
     
     if(isfield(parameter, 'study'));
         % Determine the filename
-        filename = sprintf('%s/%s/%s.mat', gps_presets('parameters'), parameter.study, parameter.name);
+        filename = sprintf('%s/%s/%s.mat', gps_presets('studyparameters'), parameter.study, parameter.name);
         
         % Save the file
         save(filename, '-struct', 'parameter');

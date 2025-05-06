@@ -51,8 +51,8 @@ subject.type = 'subject';
 % last_edited
 subject.last_edited = '';
 
-% version
-subject.version = 'GPS1.8';
+% version -- this should really be pulled from a central location.
+subject.version = 'GPS2.0';
 
 %% MRI Fields
 

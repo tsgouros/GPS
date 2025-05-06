@@ -51,7 +51,7 @@ if(~isempty(strfind(operation, 'c')))
         fs = mean(diff(evedata(diff(evedata(:, 2)) > 1, 1)) ./ diff(evedata(diff(evedata(:, 2)) > 1, 2)));
         
         % construct evedata from the macdata
-        %         macdata = sprintf('%s/%s/Subject Data/%s.mat', gps_presets('parameters'), study.name, subject.name);
+        %         macdata = sprintf('%s/%s/Subject Data/%s.mat', gps_presets('studyparameters'), study.name, subject.name);
         %         macdata = load(macdata, block);
         %         macdata = macdata.(block);
         

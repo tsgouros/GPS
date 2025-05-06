@@ -60,7 +60,7 @@ end
 condition.last_edited = 'new';
 
 % version
-condition.version = 'GPS1.8';
+condition.version = 'GPS2.0';
 
 % subjects
 if(past && isfield(oldcondition, 'subjects'))

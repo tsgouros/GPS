@@ -10,7 +10,7 @@ function trialdata = gpsa_meg_eveproc_AR_readblockfile(blockName)
 study = 'AR1'; if(blockName(1) == 'B'); study = 'ARTX1'; end
 
 stimuli_file = sprintf('%s/%s/%s_%s.txt',...
-    gps_presets('parameters'), study, study, blockName);
+    gps_presets('studyparameters'), study, study, blockName);
 
 if(strcmp(study, 'AR1')) % Treatment Experiment on Chronic Aphasics
     % F43_S_1.aiff	gang	gAN	Slide043.jpg	motorcycle	3

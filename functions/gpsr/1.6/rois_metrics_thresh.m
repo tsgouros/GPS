@@ -240,6 +240,6 @@ metric.data.v = v;
 setappdata(GPSR_vars.datafig, type, metric);
 
 guidata(hObject, GPSR_vars);
-rois_draw(GPSR_vars);
+GPSR_vars = rois_draw(GPSR_vars);
 
 end % function
